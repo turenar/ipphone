@@ -1,0 +1,3 @@
+# vim: set ft=meson:
+
+#option('ipv6', type: 'boolean', value: false)
