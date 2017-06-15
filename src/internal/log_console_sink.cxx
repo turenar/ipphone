@@ -1,5 +1,6 @@
 #include "log_console_sink.hxx"
 #include <iostream>
+#include <log_levels.hxx>
 
 namespace internal {
 	void log_console_sink::log(g3::LogMessageMover mesinst) {
@@ -10,8 +11,8 @@ namespace internal {
 		const char* levelColor;
 		if (mes.wasFatal()) {
 			levelColor = "1;30;41"; // bold black on red
-//		} else if (mes._level == ERR) {
-//			levelColor = "1;31"; // bold red
+		} else if (mes._level == ERROR) {
+			levelColor = "1;31"; // bold red
 		} else if (mes._level == WARNING) {
 			levelColor = "1;33"; // bold yellow
 		} else if (mes._level == INFO) {

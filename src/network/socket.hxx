@@ -9,7 +9,10 @@ namespace ipp {
 		public:
 			socket();
 
-			socket_connection connect(socket_address& addr);
+			socket_connection connect(const socket_address& addr);
+
+		protected:
+			fd_type _fd;
 		};
 	}
 }

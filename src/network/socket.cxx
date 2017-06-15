@@ -1,18 +1,22 @@
+#include <boost/throw_exception.hpp>
 #include "socket.hxx"
+#include "socket_exception.hxx"
 
 namespace ipp {
 	namespace network {
-		socket::socket(socket_address& addr) : _addr(addr) {
+		socket::socket() {
+			_fd = ::socket(AF_INET, SOCK_STREAM, 0);
+			if (_fd < 0) {
+				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
+			}
 		}
 
-		void socket::connect() {
-			int fd = connect()
+		socket_connection socket::connect(const socket_address& addr) {
+			int result = ::connect(_fd, addr.get_native_address(), addr.get_native_size());
+			if (result < 0) {
+				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
+			}
+			return socket_connection(_fd);
 		}
-
-		void send(uint8_t* data, size_t len) {
-
-		}
-
-		size_t recv(uint8_t* buf, size_t buflen) {}
 	}
 }

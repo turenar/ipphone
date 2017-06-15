@@ -14,17 +14,19 @@ namespace ipp {
 
 			socket_address& set_address(const char* address_str) {
 				this->_addr.sin_addr.s_addr = inet_addr(address_str);
+				return *this;
 			}
 
 			socket_address& set_port(uint16_t port) {
 				this->_addr.sin_port = htons(port);
+				return *this;
 			}
 
-			sockaddr* get_native_address() {
-				return static_cast<sockaddr*>(&_addr);
+			const sockaddr* get_native_address() const {
+				return reinterpret_cast<const sockaddr*>(&_addr);
 			}
 
-			int get_size() {
+			int get_native_size() const {
 				return static_cast<int>(sizeof(_addr));
 			}
 

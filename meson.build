@@ -26,6 +26,7 @@ g3logger_dep = dependency('g3logger', fallback: ['g3log', 'g3logger_dep'])
 
 i1i2i3_files = [
 	'src/main.cxx',
+	'src/error_info.cxx',
 	'src/network/socket.cxx',
 	'src/network/socket_connection.cxx',
 	'src/network/socket_exception.cxx',

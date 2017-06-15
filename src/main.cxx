@@ -1,7 +1,11 @@
 #include <g3log/g3log.hpp>
 #include <g3log/logworker.hpp>
 #include <iostream>
+#include <boost/exception/exception.hpp>
+#include <boost/exception/diagnostic_information.hpp>
 #include "internal/log_console_sink.hxx"
+#include "network/socket.hxx"
+#include "log_levels.hxx"
 
 namespace {
 	auto prepare_logger() -> decltype(g3::LogWorker::createLogWorker()) {
@@ -17,5 +21,34 @@ namespace {
 
 int main() {
 	auto worker = prepare_logger();
-	std::cout << "Hello world!" << std::endl;
+	try {
+		ipp::network::socket_address addr;
+		addr.set_address("127.0.0.1").set_port(80);
+
+		ipp::network::socket sock;
+		ipp::network::socket_connection con{sock.connect(addr)};
+
+		const char r[] = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+		con.send(reinterpret_cast<const std::uint8_t*>(r), sizeof(r) - 1);
+
+		while (true) {
+			char buf[4096];
+			std::size_t s = con.recv(reinterpret_cast<std::uint8_t*>(buf), sizeof(buf));
+			if (s == 0) {
+				break;
+			}
+			std::cout << std::string(buf, s);
+		}
+	} catch (boost::exception& ex) {
+		LOG(ERROR) << "uncaught ipp_exception";
+		std::exception* stdex = dynamic_cast<std::exception*>(&ex);
+		if (stdex) {
+			LOG(ERROR) << "what: " << stdex->what();
+		}
+		LOG(ERROR) << boost::diagnostic_information_what(ex);
+		return 1;
+/*	} catch (std::ipp_exception& ex) {
+		LOG(FATAL) << "uncaught ipp_exception: " << ex.what();
+		return 1;
+*/    }
 }
