@@ -26,8 +26,8 @@ namespace ipp {
 				return reinterpret_cast<const sockaddr*>(&_addr);
 			}
 
-			int get_native_size() const {
-				return static_cast<int>(sizeof(_addr));
+			socklen_t get_native_size() const {
+				return static_cast<socklen_t>(sizeof(_addr));
 			}
 
 		private:
