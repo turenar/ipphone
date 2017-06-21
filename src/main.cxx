@@ -40,15 +40,12 @@ int main() {
 			std::cout << std::string(buf, s);
 		}
 	} catch (boost::exception& ex) {
-		LOG(ERROR) << "uncaught ipp_exception";
+		LOG(ERROR) << "uncaught exception";
 		std::exception* stdex = dynamic_cast<std::exception*>(&ex);
 		if (stdex) {
 			LOG(ERROR) << "what: " << stdex->what();
 		}
 		LOG(ERROR) << boost::diagnostic_information_what(ex);
 		return 1;
-/*	} catch (std::ipp_exception& ex) {
-		LOG(FATAL) << "uncaught ipp_exception: " << ex.what();
-		return 1;
-*/    }
+	}
 }
