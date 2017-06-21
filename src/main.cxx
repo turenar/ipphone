@@ -1,6 +1,5 @@
 #include <iostream>
 #include <boost/exception/diagnostic_information.hpp>
-#include <boost/exception/exception.hpp>
 #include <g3log/g3log.hpp>
 #include <g3log/logworker.hpp>
 #include "log_levels.hxx"
