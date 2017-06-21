@@ -6,7 +6,21 @@ project('i1i2i3', 'cpp',
 cpp_compiler = meson.get_compiler('cpp')
 
 if get_option('warning_level') == '3'
-	extra_warnings = ['-Wdelete-non-virtual-dtor', '-Wsuggest-final-methods', '-Wsuggest-final-types', '-Wsuggest-override', '-Wdisabled-optimization', '-Wfloat-equal', '-Wctor-dtor-privacy', '-Wlogical-op', '-Wnoexcept', '-Woverloaded-virtual', '-Wswitch-default', '-Wundef', '-Wold-style-cast']
+	extra_warnings = [
+		'-Wctor-dtor-privacy',
+		'-Wdelete-non-virtual-dtor',
+		'-Wdisabled-optimization',
+		'-Wfloat-equal',
+		'-Wlogical-op',
+		'-Wnoexcept',
+		'-Wold-style-cast',
+		'-Woverloaded-virtual',
+		'-Wsuggest-final-methods',
+		'-Wsuggest-final-types',
+		'-Wsuggest-override',
+		'-Wswitch-default',
+		'-Wundef',
+	]
 	foreach warn : extra_warnings
 		if cpp_compiler.has_argument(warn)
 			add_project_arguments(warn, language: 'cpp')
