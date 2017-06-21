@@ -23,12 +23,12 @@ int main() {
 	auto worker = prepare_logger();
 	try {
 		ipp::network::socket_address addr;
-		addr.set_address("127.0.0.1").set_port(80);
+		addr.set_address("127.0.0.1").set_port(80u);
 
 		ipp::network::socket sock;
 		ipp::network::socket_connection con{sock.connect(addr)};
 
-		const char r[] = "GET / HTTP/1.1\r\nHost: localhost\r\n\r\n";
+		const char r[] = "GET / HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n";
 		con.send(reinterpret_cast<const std::uint8_t*>(r), sizeof(r) - 1);
 
 		while (true) {
