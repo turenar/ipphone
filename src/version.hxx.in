@@ -1,0 +1,5 @@
+#pragma once
+
+namespace ipp {
+	const char* const VERSION = "@VCS_TAG@";
+}

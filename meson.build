@@ -34,19 +34,4 @@ if get_option('buildtype').contains('debug')
 	endif
 endif
 
-
-boost_dep = dependency('boost', modules : ['exception'])
-g3logger_dep = dependency('g3logger', fallback: ['g3log', 'g3logger_dep'])
-
-i1i2i3_files = [
-	'src/main.cxx',
-	'src/error_info.cxx',
-	'src/network/socket.cxx',
-	'src/network/socket_connection.cxx',
-	'src/network/socket_exception.cxx',
-	'src/internal/log_console_sink.cxx',
-]
-
-executable('main', i1i2i3_files,
-	dependencies: [boost_dep, g3logger_dep],
-	include_directories: include_directories(['src']))
+subdir('src')

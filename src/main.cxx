@@ -6,6 +6,7 @@
 #include "log_levels.hxx"
 #include "internal/log_console_sink.hxx"
 #include "network/socket.hxx"
+#include "version.hxx"
 
 namespace {
 	auto prepare_logger() -> decltype(g3::LogWorker::createLogWorker()) {
@@ -14,7 +15,7 @@ namespace {
 		worker->addSink(std::make_unique<internal::log_console_sink>(), &internal::log_console_sink::log);
 //#endif
 		g3::initializeLogging(worker.get());
-		LOG(INFO) << "Hello, g3log!";
+		LOG(INFO) << "IPP Version: " << ipp::VERSION;
 		return worker;
 	}
 }
