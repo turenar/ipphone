@@ -1,6 +1,6 @@
-#include <sys/socket.h>
-#include <boost/throw_exception.hpp>
 #include "socket_connection.hxx"
+#include <boost/throw_exception.hpp>
+#include <sys/socket.h>
 #include "socket_exception.hxx"
 
 

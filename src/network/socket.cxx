@@ -1,5 +1,5 @@
-#include <boost/throw_exception.hpp>
 #include "socket.hxx"
+#include <boost/throw_exception.hpp>
 #include "socket_exception.hxx"
 
 namespace ipp {

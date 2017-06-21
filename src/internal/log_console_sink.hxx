@@ -1,8 +1,8 @@
 #pragma once
 
 #include <fstream>
-#include <string>
 #include <mutex>
+#include <string>
 #include <g3log/g3log.hpp>
 
 namespace internal {

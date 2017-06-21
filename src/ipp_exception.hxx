@@ -1,7 +1,7 @@
 #pragma once
 
-#include <sstream>
 #include <exception>
+#include <sstream>
 #include <boost/exception/exception.hpp>
 #include <boost/exception/info.hpp>
 #include <boost/exception/detail/error_info_impl.hpp>

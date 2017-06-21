@@ -1,8 +1,8 @@
 
+#include "error_info.hxx"
 #include <cstdlib>
 #include <ostream>
 #include "ipp_exception.hxx"
-#include "error_info.hxx"
 
 extern "C" {
 #include <execinfo.h>

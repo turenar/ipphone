@@ -1,11 +1,11 @@
+#include <iostream>
+#include <boost/exception/diagnostic_information.hpp>
+#include <boost/exception/exception.hpp>
 #include <g3log/g3log.hpp>
 #include <g3log/logworker.hpp>
-#include <iostream>
-#include <boost/exception/exception.hpp>
-#include <boost/exception/diagnostic_information.hpp>
+#include "log_levels.hxx"
 #include "internal/log_console_sink.hxx"
 #include "network/socket.hxx"
-#include "log_levels.hxx"
 
 namespace {
 	auto prepare_logger() -> decltype(g3::LogWorker::createLogWorker()) {
