@@ -1,5 +1,6 @@
 #include "socket_connection.hxx"
 #include <boost/throw_exception.hpp>
+#include <g3log/g3log.hpp>
 #include <sys/socket.h>
 #include "socket_exception.hxx"
 

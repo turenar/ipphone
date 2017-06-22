@@ -3,9 +3,9 @@
 #include <g3log/g3log.hpp>
 #include <g3log/logworker.hpp>
 #include "log_levels.hxx"
+#include "version.hxx"
 #include "internal/log_console_sink.hxx"
 #include "network/socket.hxx"
-#include "version.hxx"
 
 namespace {
 	auto prepare_logger() -> decltype(g3::LogWorker::createLogWorker()) {
