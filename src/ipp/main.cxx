@@ -2,16 +2,19 @@
 #include <boost/exception/diagnostic_information.hpp>
 #include <g3log/g3log.hpp>
 #include <g3log/logworker.hpp>
-#include "log_levels.hxx"
-#include "version.hxx"
-#include "logger/log_console_sink.hxx"
-#include "network/socket.hxx"
+#include "ipp/logger/logger.hxx"
+#include "ipp/version.hxx"
+#include "ipp/logger/log_console_sink.hxx"
+#include "ipp/network/socket.hxx"
 
 namespace {
 	auto prepare_logger() -> decltype(g3::LogWorker::createLogWorker()) {
+#ifdef NDEBUG
+		g3::only_change_at_initialization::setLogLevel(DEBUG, false);
+#endif
 		auto worker = g3::LogWorker::createLogWorker();
 //#ifdef _DEBUG
-		worker->addSink(std::make_unique<internal::log_console_sink>(), &internal::log_console_sink::log);
+		worker->addSink(std::make_unique<ipp::logger::log_console_sink>(), &ipp::logger::log_console_sink::log);
 //#endif
 		g3::initializeLogging(worker.get());
 		LOG(INFO) << "IPP Version: " << ipp::VERSION;

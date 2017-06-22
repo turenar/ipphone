@@ -5,12 +5,14 @@
 #include <string>
 #include <g3log/g3log.hpp>
 
-namespace internal {
-	class log_console_sink {
-	private:
-		std::mutex _lock;
+namespace ipp {
+	namespace logger {
+		class log_console_sink {
+		private:
+			std::mutex _lock;
 
-	public:
-		void log(g3::LogMessageMover mes);
-	};
-} /* logger */
+		public:
+			void log(g3::LogMessageMover mes);
+		};
+	} /* logger */
+}

@@ -1,5 +1,8 @@
 boost_dep = dependency('boost', modules : ['exception'])
-g3logger_dep = dependency('g3logger', fallback: ['g3log', 'g3logger_dep'])
+g3logger_dep = dependency('g3logger',
+	fallback: ['g3log', 'g3logger_dep'],
+	default_options: ['dynamic_logging=true']
+)
 
 i1i2i3_files = [
 	'error_info.cxx',
