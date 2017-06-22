@@ -2,8 +2,8 @@
 
 #include <memory>
 #include "ipp/network/socket_connection.hxx"
-#include "packet/packet.hxx"
 #include "ipp/protocol/packet/packet_builder.hxx"
+#include "packet/packet.hxx"
 
 namespace ipp {
 	namespace protocol {

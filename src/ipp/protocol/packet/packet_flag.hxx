@@ -1,11 +1,12 @@
 #pragma once
 
+#include <cstdint>
 #include <type_traits>
 
 namespace ipp {
 	namespace protocol {
 		namespace packet {
-			enum class packet_flag {
+			enum class packet_flag : std::uint8_t {
 				NONE = 0,
 			};
 

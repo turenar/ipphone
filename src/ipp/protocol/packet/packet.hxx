@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "protocol/packet/packet_flag.hxx"
+#include "ipp/protocol/packet/packet_flag.hxx"
 
 
 namespace ipp {

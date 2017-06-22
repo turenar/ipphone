@@ -40,7 +40,6 @@ namespace ipp {
 			inline packet_builder& packet_builder::write(const T& obj) {
 				return this->write(reinterpret_cast<const std::int8_t*>(&obj), sizeof(obj));
 			}
-
 		}
 	}
 }

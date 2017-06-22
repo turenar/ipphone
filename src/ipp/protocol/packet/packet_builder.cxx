@@ -20,6 +20,13 @@ namespace ipp {
 			}
 
 			void packet_builder::send(network::socket_connection& con) {
+				std::uint16_t size = static_cast<uint16_t> (_write_ptr - packet_header_size);
+				_buf[0] = size & 0xff;
+				_buf[1] = size >> 8;
+				_buf[2] = static_cast<std::uint8_t>(packet_flag::NONE);
+				_buf[3] = 0;
+				_buf[4] = 0xff;
+				_buf[5] = 0;
 				con.send(_buf, _write_ptr);
 				clear();
 			}
