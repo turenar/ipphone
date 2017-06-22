@@ -12,7 +12,7 @@ namespace ipp {
 }
 namespace boost {
 	template <>
-	class error_info<::ipp::internal::backtrace_tag, ::ipp::internal::backtrace_tag>
+	class error_info<::ipp::internal::backtrace_tag, ::ipp::internal::backtrace_tag> final
 			: public boost::exception_detail::error_info_base {
 	public:
 		error_info();
