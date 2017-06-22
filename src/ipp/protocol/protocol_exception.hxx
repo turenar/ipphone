@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ipp_exception.hxx"
+#include "ipp/ipp_exception.hxx"
 
 namespace ipp {
 	namespace protocol {

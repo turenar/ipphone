@@ -13,4 +13,4 @@ namespace internal {
 	public:
 		void log(g3::LogMessageMover mes);
 	};
-} /* internal */
+} /* logger */

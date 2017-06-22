@@ -1,6 +1,6 @@
-#include "log_console_sink.hxx"
+#include "ipp/logger/log_console_sink.hxx"
 #include <iostream>
-#include <log_levels.hxx>
+#include "ipp/log_levels.hxx"
 
 namespace internal {
 	void log_console_sink::log(g3::LogMessageMover mesinst) {
@@ -29,4 +29,4 @@ namespace internal {
 		OutputDebugStringA(tmp.c_str());
 #endif
 	}
-} /* internal */
+} /* logger */

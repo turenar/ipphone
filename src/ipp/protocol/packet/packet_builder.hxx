@@ -1,7 +1,7 @@
 #pragma once
 
-#include "network/socket_connection.hxx"
-#include "protocol/packet/packet.hxx"
+#include "ipp/network/socket_connection.hxx"
+#include "ipp/protocol/packet/packet.hxx"
 
 namespace ipp {
 	namespace protocol {

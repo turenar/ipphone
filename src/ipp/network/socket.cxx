@@ -1,6 +1,6 @@
-#include "socket.hxx"
+#include "ipp/network/socket.hxx"
 #include <boost/throw_exception.hpp>
-#include "socket_exception.hxx"
+#include "ipp/network/socket_exception.hxx"
 
 namespace ipp {
 	namespace network {

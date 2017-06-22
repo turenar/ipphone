@@ -1,6 +1,6 @@
-#include "protocol/packet/packet_builder.hxx"
+#include "ipp/protocol/packet/packet_builder.hxx"
 #include <cstring>
-#include "protocol/protocol_exception.hxx"
+#include "ipp/protocol/protocol_exception.hxx"
 
 namespace ipp {
 	namespace protocol {

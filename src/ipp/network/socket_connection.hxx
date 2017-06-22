@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <type_traits>
-#include "misc.hxx"
+#include "ipp/misc.hxx"
 
 namespace ipp {
 	namespace network {

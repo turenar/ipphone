@@ -4,7 +4,7 @@
 #include <g3log/logworker.hpp>
 #include "log_levels.hxx"
 #include "version.hxx"
-#include "internal/log_console_sink.hxx"
+#include "logger/log_console_sink.hxx"
 #include "network/socket.hxx"
 
 namespace {

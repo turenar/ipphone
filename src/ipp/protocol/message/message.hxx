@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <type_traits>
-#include "protocol/message/message_type.hxx"
+#include "ipp/protocol/message/message_type.hxx"
 
 namespace ipp {
 	namespace protocol {

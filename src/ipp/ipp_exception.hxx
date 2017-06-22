@@ -5,7 +5,7 @@
 #include <boost/exception/exception.hpp>
 #include <boost/exception/info.hpp>
 #include <boost/exception/detail/error_info_impl.hpp>
-#include "error_info.hxx"
+#include "ipp/error_info.hxx"
 
 namespace ipp {
 	class ipp_exception : public ::std::exception, public ::boost::exception {

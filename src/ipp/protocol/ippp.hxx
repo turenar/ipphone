@@ -1,9 +1,9 @@
 #pragma once
 
 #include <memory>
-#include "network/socket_connection.hxx"
+#include "ipp/network/socket_connection.hxx"
 #include "packet/packet.hxx"
-#include "protocol/packet/packet_builder.hxx"
+#include "ipp/protocol/packet/packet_builder.hxx"
 
 namespace ipp {
 	namespace protocol {

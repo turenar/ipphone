@@ -1,7 +1,7 @@
 #pragma once
 
-#include "socket_address.hxx"
-#include "socket_connection.hxx"
+#include "ipp/network/socket_address.hxx"
+#include "ipp/network/socket_connection.hxx"
 
 namespace ipp {
 	namespace network {
