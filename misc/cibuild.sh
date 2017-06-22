@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash -xe
 
 if ${BUILD_OPTIONS+:} false; then
 	:
