@@ -2,13 +2,13 @@
 
 #include <cstdint>
 #include <type_traits>
-#include "ipp/misc.hxx"
+#include "ipp/shared_fd.h"
 
 namespace ipp {
 	namespace network {
 		class socket_connection {
 		public:
-			explicit socket_connection(fd_type fd);
+			explicit socket_connection(shared_fd fd);
 			socket_connection(const socket_connection&) = delete;
 			socket_connection(socket_connection&&) = default;
 
@@ -21,7 +21,7 @@ namespace ipp {
 			std::size_t recv(std::uint8_t* buf, std::size_t buflen);
 
 		private:
-			fd_type _fd;
+			shared_fd _fd;
 		};
 
 		template <typename T, std::enable_if_t<std::is_pod<T>::value, std::nullptr_t>>

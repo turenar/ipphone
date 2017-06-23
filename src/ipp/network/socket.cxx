@@ -5,8 +5,8 @@
 namespace ipp {
 	namespace network {
 		socket::socket() {
-			_fd = ::socket(AF_INET, SOCK_STREAM, 0);
-			if (_fd < 0) {
+			_fd = shared_fd(::socket(AF_INET, SOCK_STREAM, 0));
+			if (!_fd) {
 				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
 			}
 		}

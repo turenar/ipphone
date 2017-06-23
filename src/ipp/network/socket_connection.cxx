@@ -33,7 +33,7 @@ namespace ipp {
 			}
 		}
 
-		socket_connection::socket_connection(fd_type fd) : _fd(fd) {}
+		socket_connection::socket_connection(shared_fd fd) : _fd(fd) {}
 
 		std::size_t socket_connection::send(const std::uint8_t* data, std::size_t len) {
 			debug_recv_send("send", data, len);
