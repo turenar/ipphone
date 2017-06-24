@@ -25,8 +25,6 @@ namespace ipp {
 				_buf[1] = size >> 8;
 				_buf[2] = static_cast<std::uint8_t>(packet_flag::NONE);
 				_buf[3] = 0;
-				_buf[4] = 0xff;
-				_buf[5] = 0;
 				con.send(_buf, _write_ptr);
 				clear();
 			}
