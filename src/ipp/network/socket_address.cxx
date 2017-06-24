@@ -24,7 +24,7 @@ namespace ipp {
 		}
 
 		socket_address& socket_address::set_port(uint16_t port) {
-			this->_addr.sin_port = ::htons(port);
+			this->_addr.sin_port = htons(port);
 			return *this;
 		}
 
@@ -57,7 +57,7 @@ namespace ipp {
 		}
 
 		std::uint16_t socket_address::get_port() const {
-			return ::ntohs(this->_addr.sin_port);
+			return ntohs(this->_addr.sin_port);
 		}
 	}
 }
