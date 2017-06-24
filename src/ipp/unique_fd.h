@@ -2,7 +2,10 @@
 
 #include <utility>
 #include <unistd.h>
+
+#ifndef NDEBUG
 #include "ipp/logger/logger.hxx"
+#endif
 
 namespace ipp {
 	class unique_fd {
@@ -41,11 +44,16 @@ namespace ipp {
 
 	inline unique_fd::~unique_fd() {
 		if (*this) {
+#ifndef NDEBUG
 			LOG(DEBUG) << "closing fd: " << _fd;
+#endif
 			int result = close(_fd);
+#ifndef NDEBUG
 			if (result < 0) {
 				LOG(ERROR) << "failed closing fd: " << _fd << ", result: " << result;
 			}
+#endif
+			(void) result;
 		}
 	}
 
