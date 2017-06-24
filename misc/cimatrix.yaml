@@ -6,14 +6,7 @@ BUILD_OPTIONS:
   - --buildtype=release -Db_ndebug=true
   - --buildtype=release -Db_ndebug=true --unity
   - --buildtype=release -Db_ndebug=true -Db_lto=true
-CXXFLAGS:
-  - -m64
-  - -m32
 
 exclude:
   - CXX: clang++
-    BUILD_OPTIONS: --buildtype=release -Db_ndebug=true -Db_lto=true
-  - CXXFLAGS: -m32
-    BUILD_OPTIONS: --buildtype=release -Db_ndebug=true -Db_lto=true
-  - CXXFLAGS: -m32
-    BUILD_OPTIONS: --buildtype=release -Db_ndebug=true --unity
+    BUILD_OPTIONS: -Dbuildtype=release -Db_ndebug=true -Db_lto=true
