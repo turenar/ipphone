@@ -49,6 +49,22 @@ namespace ipp {
 			}
 		}
 
+		bool socket::recvable(const std::chrono::milliseconds& timeout) {
+			fd_set rfds;
+			FD_ZERO(&rfds);
+			FD_SET(_fd, &rfds);
+
+			timeval tv;
+			auto timeout_sec = std::chrono::duration_cast<std::chrono::seconds>(timeout);
+			tv.tv_sec = timeout_sec.count();
+			tv.tv_usec = (timeout - timeout_sec).count();
+			int result = ::select(_fd + 1, &rfds, NULL, NULL, &tv);
+			if (result < 0) {
+				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
+			}
+			return result > 0;
+		}
+
 		std::size_t socket::send(const std::uint8_t* data, std::size_t len, const socket_address& addr) {
 			debug_recv_send("send", data, len);
 			ssize_t result = ::sendto(_fd, data, len, 0, addr.get_native_address(), addr.get_native_size());
@@ -65,7 +81,7 @@ namespace ipp {
 			if (result < 0) {
 				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
 			}
-			debug_recv_send("recv", buf, result);
+			debug_recv_send("recv", buf, static_cast<std::size_t>(result));
 			addr = std::move(tmp_addr);
 			return static_cast<std::size_t>(result);
 		}

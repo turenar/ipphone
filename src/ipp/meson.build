@@ -11,6 +11,8 @@ i1i2i3_files = [
 	'network/socket.cxx',
 	'network/socket_address.cxx',
 	'network/socket_connection.cxx',
+	'protocol/connection.cxx',
+	'protocol/connection_manager.cxx',
 	'protocol/ippp.cxx',
 	'protocol/packet/packet_builder.cxx',
 ]

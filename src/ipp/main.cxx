@@ -1,6 +1,7 @@
 #include <iostream>
 #include <boost/exception/diagnostic_information.hpp>
 #include <g3log/logworker.hpp>
+#include <ipp/protocol/connection_manager.hxx>
 #include "ipp/version.hxx"
 #include "ipp/logger/log_console_sink.hxx"
 #include "ipp/logger/logger.hxx"
@@ -27,21 +28,15 @@ int main() {
 	auto worker = prepare_logger();
 	try {
 		ipp::network::socket rsock;
-		rsock.bind(ipp::network::socket_address().set_address_any().set_port(0));
-		ipp::network::socket_address listening = rsock.get_listening_address();
-		LOG(DEBUG) << listening.get_address_str() << ':' << listening.get_port();
+		ipp::network::socket_address addr = ipp::network::socket_address().set_address_any().set_port(50000u);
+		rsock.bind(addr);
+		ipp::protocol::connection_manager rman{std::move(rsock)};
 
-		char buf[65536];
-		ipp::network::socket_address addr;
-		std::size_t len = rsock.recv(reinterpret_cast<uint8_t*>(buf), sizeof(buf), addr);
-
-		std::cout << "received: " << std::string(buf, len);
-
-		ipp::network::socket_connection con = rsock.connect(addr);
-		ipp::protocol::ippp p{std::move(con)};
-
-		p.connect();
-		p.disconnect();
+		ipp::network::socket wsock;
+		ipp::protocol::connection wman{wsock.connect(addr)};
+		wman.protocol().connect();
+		wman.protocol().disconnect();
+		rman.consume_socket();
 	} catch (boost::exception& ex) {
 		LOG(ERROR) << "uncaught exception";
 		std::exception* stdex = dynamic_cast<std::exception*>(&ex);

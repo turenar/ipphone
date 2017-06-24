@@ -45,6 +45,13 @@ namespace ipp {
 			return *this;
 		}
 
+		std::uint16_t socket_address::get_family() const {
+			return this->_addr.sin_family;
+		}
+
+		std::uint32_t socket_address::get_address() const {
+			return this->_addr.sin_addr.s_addr;
+		}
 		std::string socket_address::get_address_str() const {
 			return ::inet_ntoa(this->_addr.sin_addr);
 		}

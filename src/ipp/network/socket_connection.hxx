@@ -10,10 +10,10 @@ namespace ipp {
 		class socket_connection {
 		public:
 			socket_connection(socket&, socket_address);
-			socket_connection(const socket_connection&) = delete;
+			socket_connection(const socket_connection&) = default;
 			socket_connection(socket_connection&&) = default;
 
-			socket_connection& operator=(const socket_connection&) = delete;
+			socket_connection& operator=(const socket_connection&) = default;
 			socket_connection& operator=(socket_connection&&) = default;
 
 			std::size_t send(const std::uint8_t* data, std::size_t len);

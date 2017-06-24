@@ -34,6 +34,7 @@ namespace ipp {
 			}
 
 			struct connect {
+				char protocol[6];
 				std::uint8_t version;
 				std::uint8_t revision;
 				static constexpr message_type type = message_type::CONNECT;

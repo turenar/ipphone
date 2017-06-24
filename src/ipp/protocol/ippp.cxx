@@ -3,12 +3,12 @@
 
 namespace ipp {
 	namespace protocol {
-		ippp::ippp(network::socket_connection&& con) : _con(std::move(con)) {}
+		ippp::ippp(network::socket_connection con) : _con(std::move(con)) {}
 
 		ippp::~ippp() {}
 
 		void ippp::connect() {
-			_packet.write(message::pack(message::connect{protocol_version, protocol_revision}))
+			_packet.write(message::pack(message::connect{IPPP_PROTOCOL_NAME, protocol_version, protocol_revision}))
 					.send(_con);
 		}
 
