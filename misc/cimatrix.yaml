@@ -5,7 +5,7 @@ BUILD_OPTIONS:
   - --buildtype=debug
   - --buildtype=release -Db_ndebug=true
   - --buildtype=release -Db_ndebug=true --unity
-  - --buildtype=release -Db_ndebug=true -Db_lto=true
+#  - --buildtype=release -Db_ndebug=true -Db_lto=true
 
 exclude:
   - CXX: clang++
