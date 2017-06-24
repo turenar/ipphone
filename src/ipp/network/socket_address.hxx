@@ -26,8 +26,17 @@ namespace ipp {
 				return reinterpret_cast<const sockaddr*>(&_addr);
 			}
 
+			sockaddr* get_native_address() {
+				return reinterpret_cast<sockaddr*>(&_addr);
+			}
+
 			socklen_t get_native_size() const {
 				return static_cast<socklen_t>(sizeof(_addr));
+			}
+
+			socket_address& set_address_any() {
+				this->_addr.sin_addr.s_addr = INADDR_ANY;
+				return *this;
 			}
 
 		private:

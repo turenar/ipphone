@@ -26,11 +26,17 @@ namespace {
 int main() {
 	auto worker = prepare_logger();
 	try {
-		ipp::network::socket_address addr;
-		addr.set_address("127.0.0.1").set_port(50000u);
+		ipp::network::socket rsock;
+		rsock.bind(ipp::network::socket_address().set_address_any().set_port(50001));
+		rsock.listen(10);
+		auto rcon = rsock.accept();
+		char buf[65536];
+		std::size_t len = rcon.recv(reinterpret_cast<uint8_t*>(buf), sizeof(buf));
+		std::cout << "received: " << std::string(buf, len);
 
-		ipp::network::socket sock;
-		ipp::network::socket_connection con{sock.connect(addr)};
+		ipp::network::socket wsock;
+		ipp::network::socket_connection con{
+				wsock.connect(ipp::network::socket_address().set_address_any().set_port(50000))};
 		ipp::protocol::ippp p{std::move(con)};
 
 		p.connect();

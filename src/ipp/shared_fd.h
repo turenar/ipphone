@@ -23,7 +23,7 @@ namespace ipp {
 
 		operator fd_type();
 		fd_type get();
-		explicit operator bool();
+		explicit operator bool() const;
 
 	private:
 		fd_type _fd;
@@ -56,7 +56,11 @@ namespace ipp {
 
 	inline shared_fd& shared_fd::operator=(unique_fd&& other) {
 		_fd = other.get();
-		_ptr = std::make_shared<unique_fd>(std::move(other));
+		if (other) {
+			_ptr = std::make_shared<unique_fd>(std::move(other));
+		} else {
+			_ptr.reset();
+		}
 		return *this;
 	}
 
@@ -66,5 +70,5 @@ namespace ipp {
 
 	inline shared_fd::fd_type shared_fd::get() { return _fd; }
 
-	inline shared_fd::operator bool() { return _fd >= 0; }
+	inline shared_fd::operator bool() const { return _fd >= 0; }
 }

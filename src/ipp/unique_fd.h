@@ -19,9 +19,9 @@ namespace ipp {
 
 		~unique_fd();
 
-		operator fd_type();
+		explicit operator fd_type();
 		fd_type get();
-		explicit operator bool();
+		explicit operator bool() const;
 
 	private:
 		fd_type _fd;
@@ -42,7 +42,10 @@ namespace ipp {
 	inline unique_fd::~unique_fd() {
 		if (*this) {
 			LOG(DEBUG) << "closing fd: " << _fd;
-			close(_fd);
+			int result = close(_fd);
+			if (result < 0) {
+				LOG(ERROR) << "failed closing fd: " << _fd << ", result: " << result;
+			}
 		}
 	}
 
@@ -50,5 +53,5 @@ namespace ipp {
 
 	inline unique_fd::fd_type unique_fd::get() { return _fd; }
 
-	inline unique_fd::operator bool() { return _fd >= 0; }
+	inline unique_fd::operator bool() const { return _fd >= 0; }
 }
