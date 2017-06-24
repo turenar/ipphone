@@ -1,5 +1,9 @@
 project('i1i2i3', 'cpp',
-	default_options: ['cpp_std=c++14', 'warning_level=3'],
+	default_options: [
+		'cpp_std=c++14',
+		'warning_level=3',
+		'default_library=static',
+	],
 	version: '0.1.0',
 	license: 'MIT')
 
