@@ -27,16 +27,17 @@ int main() {
 	auto worker = prepare_logger();
 	try {
 		ipp::network::socket rsock;
-		rsock.bind(ipp::network::socket_address().set_address_any().set_port(50001));
-		rsock.listen(10);
-		auto rcon = rsock.accept();
+		rsock.bind(ipp::network::socket_address().set_address_any().set_port(0));
+		ipp::network::socket_address listening = rsock.get_listening_address();
+		LOG(DEBUG) << listening.get_address_str() << ':' << listening.get_port();
+
 		char buf[65536];
-		std::size_t len = rcon.recv(reinterpret_cast<uint8_t*>(buf), sizeof(buf));
+		ipp::network::socket_address addr;
+		std::size_t len = rsock.recv(reinterpret_cast<uint8_t*>(buf), sizeof(buf), addr);
+
 		std::cout << "received: " << std::string(buf, len);
 
-		ipp::network::socket wsock;
-		ipp::network::socket_connection con{
-				wsock.connect(ipp::network::socket_address().set_address_any().set_port(50000))};
+		ipp::network::socket_connection con = rsock.connect(addr);
 		ipp::protocol::ippp p{std::move(con)};
 
 		p.connect();

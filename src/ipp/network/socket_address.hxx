@@ -1,43 +1,28 @@
 #pragma once
 
+#include <utility>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <string>
 
 namespace ipp {
 	namespace network {
 		class socket_address {
 		public:
-			socket_address() {
-				_addr.sin_family = AF_INET;
-			}
+			socket_address();
+			socket_address(sockaddr_in&& other);
 
-			socket_address& set_address(const char* address_str) {
-				this->_addr.sin_addr.s_addr = inet_addr(address_str);
-				return *this;
-			}
+			socket_address& set_address(const char* address_str);
+			socket_address& set_address_any();
+			socket_address& set_port(uint16_t port);
 
-			socket_address& set_port(uint16_t port) {
-				this->_addr.sin_port = htons(port);
-				return *this;
-			}
+			std::string get_address_str() const;
+			std::uint16_t get_port() const;
 
-			const sockaddr* get_native_address() const {
-				return reinterpret_cast<const sockaddr*>(&_addr);
-			}
-
-			sockaddr* get_native_address() {
-				return reinterpret_cast<sockaddr*>(&_addr);
-			}
-
-			socklen_t get_native_size() const {
-				return static_cast<socklen_t>(sizeof(_addr));
-			}
-
-			socket_address& set_address_any() {
-				this->_addr.sin_addr.s_addr = INADDR_ANY;
-				return *this;
-			}
+			const sockaddr* get_native_address() const;
+			sockaddr* get_native_address();
+			socklen_t get_native_size() const;
 
 		private:
 			struct sockaddr_in _addr;

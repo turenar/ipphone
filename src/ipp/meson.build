@@ -9,6 +9,7 @@ i1i2i3_files = [
 	'logger/log_console_sink.cxx',
 	'main.cxx',
 	'network/socket.cxx',
+	'network/socket_address.cxx',
 	'network/socket_connection.cxx',
 	'protocol/ippp.cxx',
 	'protocol/packet/packet_builder.cxx',
