@@ -2,10 +2,10 @@ CXX:
   - g++
   - clang++
 BUILD_OPTIONS:
-  - -Dbuildtype=debug
-  - -Dbuildtype=release -Db_ndebug=true
-  - -Dbuildtype=release -Db_ndebug=true -Dunity=true
-  - -Dbuildtype=release -Db_ndebug=true -Db_lto=true
+  - --buildtype=debug
+  - --buildtype=release -Db_ndebug=true
+  - --buildtype=release -Db_ndebug=true --unity
+  - --buildtype=release -Db_ndebug=true -Db_lto=true
 
 exclude:
   - CXX: clang++
