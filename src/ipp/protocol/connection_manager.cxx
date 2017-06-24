@@ -1,7 +1,7 @@
-#include <cstring>
-#include "ipp/protocol/message/message.hxx"
 #include "ipp/protocol/connection_manager.hxx"
+#include <cstring>
 #include "ipp/logger/logger.hxx"
+#include "ipp/protocol/message/message.hxx"
 
 namespace ipp {
 	namespace protocol {

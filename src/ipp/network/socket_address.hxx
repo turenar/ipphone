@@ -1,9 +1,9 @@
 #pragma once
 
+#include <string>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include <string>
 
 namespace ipp {
 	namespace network {

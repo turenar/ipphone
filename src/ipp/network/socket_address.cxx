@@ -1,8 +1,8 @@
+#include "ipp/network/socket_address.hxx"
 #include <utility>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include "ipp/network/socket_address.hxx"
 #include "ipp/ipp_exception.hxx"
 
 namespace ipp {

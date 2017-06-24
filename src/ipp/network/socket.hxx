@@ -1,8 +1,8 @@
 #pragma once
 
 #include <chrono>
-#include "ipp/network/socket_address.hxx"
 #include "ipp/shared_fd.h"
+#include "ipp/network/socket_address.hxx"
 
 namespace ipp {
 	namespace network {
