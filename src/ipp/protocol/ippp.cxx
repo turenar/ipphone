@@ -7,6 +7,10 @@ namespace ipp {
 
 		ippp::~ippp() {}
 
+		void ippp::keep_alive() {
+			_packet.write(message::pack(message::keep_alive{}))
+					.send(_con);
+		}
 		void ippp::connect() {
 			_packet.write(message::pack(message::connect{IPPP_PROTOCOL_NAME, protocol_version, protocol_revision}))
 					.send(_con);

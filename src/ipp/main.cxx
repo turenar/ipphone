@@ -27,13 +27,18 @@ namespace {
 	class listener : public ipp::protocol::protocol_listener {
 	public:
 		virtual void
-		on_connect(ipp::protocol::connection&, const ipp::protocol::message::connect*, std::size_t len) override {
+		on_connect(ipp::protocol::connection&, const ipp::protocol::message::connect*, std::size_t) override {
 			LOG(INFO) << "msg=connect";
 		}
 
 		virtual void
-		on_disconnect(ipp::protocol::connection&, const ipp::protocol::message::disconnect*, std::size_t len) override {
+		on_disconnect(ipp::protocol::connection&, const ipp::protocol::message::disconnect*, std::size_t) override {
 			LOG(INFO) << "msg=disconnect";
+		}
+
+		virtual void
+		on_keep_alive(ipp::protocol::connection&, const ipp::protocol::message::keep_alive*, std::size_t) override {
+			LOG(INFO) << "msg=keepalive";
 		}
 	};
 }
@@ -50,6 +55,7 @@ int main() {
 		ipp::network::socket wsock;
 		ipp::protocol::connection wman{wsock.connect(addr), l};
 		wman.protocol().connect();
+		wman.protocol().keep_alive();
 		wman.protocol().disconnect();
 		rman.consume_socket();
 	} catch (boost::exception& ex) {

@@ -33,6 +33,10 @@ namespace ipp {
 				return message_packer<MessageSpec, std::false_type>{MessageSpec::type, sp};
 			}
 
+			struct keep_alive {
+				static constexpr message_type type = message_type::KEEP_ALIVE;
+			};
+
 			struct connect {
 				char protocol[6];
 				std::uint8_t version;

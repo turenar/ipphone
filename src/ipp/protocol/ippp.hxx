@@ -17,6 +17,7 @@ namespace ipp {
 			ippp(network::socket_connection);
 			~ippp();
 
+			void keep_alive();
 			void connect();
 			void disconnect();
 
