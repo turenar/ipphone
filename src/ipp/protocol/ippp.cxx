@@ -1,5 +1,6 @@
-#include "ippp.hxx"
-#include <ipp/protocol/message/message.hxx>
+#include "ipp/protocol/ippp.hxx"
+#include "ipp/protocol/message/message.hxx"
+#include "ipp/protocol/message/message_connection.hxx"
 
 namespace ipp {
 	namespace protocol {

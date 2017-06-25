@@ -32,25 +32,6 @@ namespace ipp {
 			constexpr message_packer<MessageSpec, std::false_type> pack(MessageSpec sp) {
 				return message_packer<MessageSpec, std::false_type>{MessageSpec::type, sp};
 			}
-
-			struct keep_alive {
-				static constexpr message_type type = message_type::keep_alive;
-			};
-
-			struct connect {
-				char protocol[6];
-				std::uint8_t version;
-				std::uint8_t revision;
-				static constexpr message_type type = message_type::connect;
-			};
-
-			struct disconnect {
-				static constexpr message_type type = message_type::disconnect;
-			};
-
-			struct channel_open{
-				static constexpr message_type type = message_type::channel_open;
-			};
 		}
 	}
 }
