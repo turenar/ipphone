@@ -5,15 +5,22 @@
 
 namespace ipp {
 	namespace protocol {
+		class protocol_listener;
+
 		class connection {
 		public:
-			connection(network::socket_connection&&);
+			using listener_type = protocol_listener;
 
-			void parse_message(const std::uint8_t* msg, std::size_t len);
+			connection(network::socket_connection&&, listener_type&);
+
+			bool parse_message(const std::uint8_t* msg, std::size_t len);
 			ippp& protocol();
+
+			listener_type& get_listener();
 
 		private:
 			ippp _protocol;
+			listener_type& _listener;
 		};
 	}
 }

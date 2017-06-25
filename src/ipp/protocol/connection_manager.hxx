@@ -6,9 +6,13 @@
 
 namespace ipp {
 	namespace protocol {
+		class protocol_listener;
+
 		class connection_manager {
 		public:
-			connection_manager(network::socket&&);
+			using listener_type = protocol_listener;
+
+			connection_manager(network::socket&&, listener_type& listener);
 			connection_manager(const connection_manager&) = delete;
 			connection_manager(connection_manager&&) = default;
 
@@ -19,6 +23,7 @@ namespace ipp {
 
 		private:
 			network::socket _sock;
+			listener_type& _listener;
 			std::unordered_map<network::socket_address, connection> _connection_map;
 		};
 	}

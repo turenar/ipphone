@@ -7,6 +7,7 @@
 #include "ipp/logger/logger.hxx"
 #include "ipp/network/socket.hxx"
 #include "ipp/protocol/ippp.hxx"
+#include "ipp/protocol/protocol_listener.hxx"
 
 namespace {
 	auto prepare_logger() -> decltype(g3::LogWorker::createLogWorker()) {
@@ -22,6 +23,19 @@ namespace {
 		LOG(INFO) << "IPP Version: " << ipp::VERSION;
 		return worker;
 	}
+
+	class listener : public ipp::protocol::protocol_listener {
+	public:
+		virtual void
+		on_connect(ipp::protocol::connection&, const ipp::protocol::message::connect*, std::size_t len) override {
+			LOG(INFO) << "msg=connect";
+		}
+
+		virtual void
+		on_disconnect(ipp::protocol::connection&, const ipp::protocol::message::disconnect*, std::size_t len) override {
+			LOG(INFO) << "msg=disconnect";
+		}
+	};
 }
 
 int main() {
@@ -30,10 +44,11 @@ int main() {
 		ipp::network::socket rsock;
 		ipp::network::socket_address addr = ipp::network::socket_address().set_address_any().set_port(50000u);
 		rsock.bind(addr);
-		ipp::protocol::connection_manager rman{std::move(rsock)};
+		listener l;
+		ipp::protocol::connection_manager rman{std::move(rsock), l};
 
 		ipp::network::socket wsock;
-		ipp::protocol::connection wman{wsock.connect(addr)};
+		ipp::protocol::connection wman{wsock.connect(addr), l};
 		wman.protocol().connect();
 		wman.protocol().disconnect();
 		rman.consume_socket();

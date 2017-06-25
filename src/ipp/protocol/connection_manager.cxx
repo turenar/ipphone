@@ -27,7 +27,8 @@ namespace ipp {
 			}
 		}
 
-		connection_manager::connection_manager(network::socket&& sock) : _sock(std::move(sock)) {
+		connection_manager::connection_manager(network::socket&& sock, listener_type& listener)
+				: _sock(std::move(sock)), _listener(listener) {
 		}
 
 		void connection_manager::consume_socket() {
@@ -47,7 +48,8 @@ namespace ipp {
 						continue;
 					}
 					LOG(DEBUG) << "incoming connection!";
-					iterator = _connection_map.emplace(addr, network::socket_connection(_sock, addr)).first;
+					const connection& new_connection = connection(network::socket_connection(_sock, addr), _listener);
+					iterator = _connection_map.emplace(addr, new_connection).first;
 					iterator->second.protocol().connect();
 				}
 				iterator->second.parse_message(message, message_len);
