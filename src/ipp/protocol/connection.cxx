@@ -32,11 +32,11 @@ namespace ipp {
 
 			message::message_type type = static_cast<message::message_type>(*msg);
 			switch (type) {
-				case message::message_type::CONNECT:
+				case message::message_type::connect:
 					return dispatch<message::connect>(*this, msg, len, &listener_type::on_connect);
-				case message::message_type::DISCONNECT:
+				case message::message_type::disconnect:
 					return dispatch<message::disconnect>(*this, msg, len, &listener_type::on_disconnect);
-				case message::message_type::KEEP_ALIVE:
+				case message::message_type::keep_alive:
 					return dispatch<message::keep_alive>(*this, msg, len, &listener_type::on_keep_alive);
 				default:
 					LOG(WARNING) << "unknown message type: " << static_cast<std::uint8_t>(type);

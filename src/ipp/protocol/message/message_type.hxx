@@ -6,9 +6,12 @@ namespace ipp {
 	namespace protocol {
 		namespace message {
 			enum class message_type : std::uint8_t {
-				KEEP_ALIVE,
-				CONNECT,
-				DISCONNECT,
+				keep_alive,
+				connect,
+				disconnect,
+				channel_open,
+				channel_data,
+				channel_close,
 			};
 		}
 	}

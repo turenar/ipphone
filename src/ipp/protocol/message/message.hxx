@@ -34,18 +34,22 @@ namespace ipp {
 			}
 
 			struct keep_alive {
-				static constexpr message_type type = message_type::KEEP_ALIVE;
+				static constexpr message_type type = message_type::keep_alive;
 			};
 
 			struct connect {
 				char protocol[6];
 				std::uint8_t version;
 				std::uint8_t revision;
-				static constexpr message_type type = message_type::CONNECT;
+				static constexpr message_type type = message_type::connect;
 			};
 
 			struct disconnect {
-				static constexpr message_type type = message_type::DISCONNECT;
+				static constexpr message_type type = message_type::disconnect;
+			};
+
+			struct channel_open{
+				static constexpr message_type type = message_type::channel_open;
 			};
 		}
 	}
