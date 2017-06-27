@@ -38,6 +38,12 @@ namespace ipp {
 					return dispatch<message::disconnect>(*this, msg, len, &listener_type::on_disconnect);
 				case message::message_type::keep_alive:
 					return dispatch<message::keep_alive>(*this, msg, len, &listener_type::on_keep_alive);
+				case message::message_type::channel_open:
+					return dispatch<message::channel_open>(*this, msg, len, &listener_type::on_channel_open);
+				case message::message_type::channel_data:
+					return dispatch<message::channel_data>(*this, msg, len, &listener_type::on_channel_data);
+				case message::message_type::channel_close:
+					return dispatch<message::channel_close>(*this, msg, len, &listener_type::on_channel_close);
 				default:
 					LOG(WARNING) << "unknown message type: " << static_cast<std::uint8_t>(type);
 					return false;

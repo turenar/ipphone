@@ -7,6 +7,9 @@
 namespace ipp {
 	namespace protocol {
 		namespace message {
+			// this is a just marker
+			struct variadic_data {};
+
 			template <typename MessageSpec, typename Enable>
 			struct message_packer;
 

@@ -40,6 +40,21 @@ namespace {
 		on_keep_alive(ipp::protocol::connection&, const ipp::protocol::message::keep_alive*, std::size_t) override {
 			LOG(INFO) << "msg=keepalive";
 		}
+
+		virtual void on_channel_open(ipp::protocol::connection&, const ipp::protocol::message::channel_open*,
+		                             std::size_t) override {
+			LOG(INFO) << "msg=channel_open";
+		}
+
+		virtual void on_channel_data(ipp::protocol::connection&, const ipp::protocol::message::channel_data*,
+		                             std::size_t) override {
+			LOG(INFO) << "msg=channel_data";
+		}
+
+		virtual void on_channel_close(ipp::protocol::connection&, const ipp::protocol::message::channel_close*,
+		                              std::size_t) override {
+			LOG(INFO) << "msg=channel_close";
+		}
 	};
 }
 
@@ -56,6 +71,11 @@ int main() {
 		ipp::protocol::connection wman{wsock.connect(addr), l};
 		wman.protocol().connect();
 		wman.protocol().keep_alive();
+		wman.protocol().channel_open(1, ipp::protocol::message::channel_type::sound_stereo,
+		                             ipp::protocol::message::channel_flag::receivable);
+		std::uint8_t v[0x100] = {};
+		wman.protocol().channel_data(1, v, sizeof(v));
+		wman.protocol().channel_close(1);
 		wman.protocol().disconnect();
 		rman.consume_socket();
 	} catch (boost::exception& ex) {

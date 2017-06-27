@@ -9,9 +9,9 @@ namespace ipp {
 				clear();
 			}
 
-			packet_builder& packet_builder::write(const std::int8_t* data, std::size_t len) {
+			packet_builder& packet_builder::write(const std::uint8_t* data, std::size_t len) {
 				if (_write_ptr + len > packet_max_size) {
-					throw protocol_exception("packet size exceeded");
+					IPP_THROW_EXCEPTION(protocol_exception("packet size exceeded"));
 				}
 				std::memcpy(_buf + _write_ptr, data, len);
 				_write_ptr += len;

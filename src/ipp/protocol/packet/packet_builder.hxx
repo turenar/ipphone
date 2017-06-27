@@ -18,7 +18,7 @@ namespace ipp {
 				packet_builder& write(T);
 				template <typename T, std::enable_if_t<std::is_pod<T>::value, std::nullptr_t> = nullptr>
 				packet_builder& write(const T&);
-				packet_builder& write(const std::int8_t* data, std::size_t len);
+				packet_builder& write(const std::uint8_t* data, std::size_t len);
 
 				void send(network::socket_connection&);
 				void clear();
@@ -33,12 +33,12 @@ namespace ipp {
 
 			template <typename T, std::enable_if_t<std::is_integral<T>::value, std::nullptr_t>>
 			inline packet_builder& packet_builder::write(T val) {
-				return this->write(reinterpret_cast<const std::int8_t*>(&val), sizeof(val));
+				return this->write(reinterpret_cast<const std::uint8_t*>(&val), sizeof(val));
 			}
 
 			template <typename T, std::enable_if_t<std::is_pod<T>::value, std::nullptr_t>>
 			inline packet_builder& packet_builder::write(const T& obj) {
-				return this->write(reinterpret_cast<const std::int8_t*>(&obj), sizeof(obj));
+				return this->write(reinterpret_cast<const std::uint8_t*>(&obj), sizeof(obj));
 			}
 		}
 	}
