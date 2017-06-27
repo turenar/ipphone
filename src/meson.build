@@ -1,4 +1,5 @@
 subdir('ipp')
 
-executable('main', 'main.cxx',
+executable('ippbin', 'ippbin.cxx',
 	dependencies: libipp_dep)
+executable('main', 'main.cxx')
