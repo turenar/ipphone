@@ -32,6 +32,16 @@ namespace ipp {
 				: _sock(std::move(sock)), _listener(listener) {
 		}
 
+		connection& connection_manager::connect(const network::socket_address& addr) {
+			auto iterator = _connection_map.find(addr);
+			if (iterator == _connection_map.end()) {
+				const connection& new_connection = connection(network::socket_connection(_sock, addr), _listener);
+				iterator = _connection_map.emplace(addr, new_connection).first;
+				iterator->second.protocol().connect();
+			}
+			return iterator->second;
+		}
+
 		void connection_manager::consume_socket() {
 			std::uint8_t buf[65536];
 			network::socket_address addr;
@@ -55,6 +65,14 @@ namespace ipp {
 				}
 				iterator->second.parse_message(message, message_len);
 			}
+		}
+
+		connection_manager::connection_map_type& connection_manager::get_connections() {
+			return _connection_map;
+		}
+
+		network::socket& connection_manager::get_socket() {
+			return _sock;
 		}
 	}
 }

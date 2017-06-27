@@ -1,3 +1,4 @@
+subdir('sox')
 subdir('ipp')
 
 executable('ippbin', 'ippbin.cxx',

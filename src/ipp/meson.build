@@ -14,16 +14,17 @@ libipphone_files = [
 	'protocol/connection_manager.cxx',
 	'protocol/ippp.cxx',
 	'protocol/packet/packet_builder.cxx',
+	'ipphone.cxx',
 ]
 
 vcs_rev = vcs_tag(input: 'version.hxx.in', output: 'version.hxx',
 	fallback: meson.project_version())
 
 libipp = library('ipphone', [libipphone_files, vcs_rev],
-	dependencies: [boost_dep, g3logger_dep],
+	dependencies: [boost_dep, g3logger_dep, libsoxcpp_dep],
 	include_directories: include_directories(['..']))
 
 libipp_dep = declare_dependency(
 	link_with: libipp,
-	dependencies: [boost_dep, g3logger_dep],
+	dependencies: [boost_dep, g3logger_dep, libsoxcpp_dep],
 	include_directories: include_directories(['..']))
