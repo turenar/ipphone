@@ -25,6 +25,7 @@ namespace ipp {
 						}
 						buf << std::setw(2) << std::setfill('0') << static_cast<int>(*p++);
 					}
+					break;
 				}
 				LOG(DEBUG) << buf.str();
 #endif
