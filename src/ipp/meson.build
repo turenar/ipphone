@@ -22,7 +22,8 @@ vcs_rev = vcs_tag(input: 'version.hxx.in', output: 'version.hxx',
 
 libipp = library('ipphone', [libipphone_files, vcs_rev],
 	dependencies: [boost_dep, g3logger_dep, libsoxcpp_dep],
-	include_directories: include_directories(['..']))
+	include_directories: include_directories(['..']),
+	cpp_args: project_warnings)
 
 libipp_dep = declare_dependency(
 	link_with: libipp,

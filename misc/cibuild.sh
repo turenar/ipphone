@@ -11,3 +11,4 @@ mkdir build
 cd build
 meson .. ${BUILD_OPTIONS}
 ninja -j1 -v
+ninja -j1 -v test || exit 101

@@ -9,6 +9,7 @@ project('i1i2i3', 'cpp',
 
 cpp_compiler = meson.get_compiler('cpp')
 
+project_warnings = []
 if get_option('warning_level') == '3'
 	extra_warnings = [
 		'-Wctor-dtor-privacy',
@@ -27,7 +28,8 @@ if get_option('warning_level') == '3'
 	]
 	foreach warn : extra_warnings
 		if cpp_compiler.has_argument(warn)
-			add_project_arguments(warn, language: 'cpp')
+			# add_project_arguments(warn, language: 'cpp')
+			project_warnings += [warn]
 		endif
 	endforeach
 endif
@@ -39,3 +41,4 @@ if get_option('buildtype').contains('debug')
 endif
 
 subdir('src')
+subdir('test')
