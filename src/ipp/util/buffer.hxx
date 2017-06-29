@@ -5,7 +5,6 @@
 #include <cstring>
 #include <memory>
 #include <condition_variable>
-#include "ipp/logger/logger.hxx"
 
 namespace ipp {
 	namespace util {
@@ -33,7 +32,6 @@ namespace ipp {
 
 			std::unique_ptr<array_type> _buf;
 			mutable std::mutex _lock;
-			std::condition_variable _cond;
 		};
 
 		template <typename ElementType>
@@ -56,7 +54,7 @@ namespace ipp {
 			std::size_t write_len = 0;
 			std::size_t remain_len = len;
 			LOG(DEBUG) << "write: " << write_len << ", remain: " << remain_len;
-			if (write_ptr > read_ptr && write_ptr + remain_len >= _buf_size) {
+			if (write_ptr >= read_ptr && write_ptr + remain_len >= _buf_size) {
 				std::size_t partial_len = _buf_size - write_ptr;
 				std::memcpy(_buf.get() + write_ptr, elements, sizeof(element_type) * partial_len);
 				write_ptr = 0;
@@ -82,14 +80,12 @@ namespace ipp {
 				write_ptr += write_len;
 			}
 			_write_ptr = write_ptr;
-			_cond.notify_one();
 			return write_len;
 		}
 
 		template <typename ElementType>
 		inline std::size_t buffer<ElementType>::read(element_type* elements, std::size_t len) {
 			std::unique_lock<std::mutex> lock{_lock};
-			_cond.wait(lock, [this] { return !this->empty_without_locking(); });
 
 			std::size_t read_ptr = _read_ptr;
 			std::size_t write_ptr = _write_ptr;
@@ -99,6 +95,7 @@ namespace ipp {
 			element_type* pointer = elements;
 			std::size_t read_len = 0;
 			std::size_t remain_len = len;
+			LOG(DEBUG) << "read: " << read_len << ", remain: " << remain_len;
 			if (write_ptr <= read_ptr && read_ptr + remain_len >= _buf_size) {
 				std::size_t partial_len = _buf_size - read_ptr;
 				std::memcpy(pointer, _buf.get() + read_ptr, sizeof(element_type) * partial_len);
@@ -109,6 +106,8 @@ namespace ipp {
 				_is_full = false;
 			}
 
+			LOG(DEBUG) << "ptr: " << read_ptr << "," << write_ptr << ", read: " << read_len
+			           << ", remain: " << remain_len;
 			if (!_is_full && read_ptr == write_ptr) {
 				// empty
 			} else if (read_ptr < write_ptr && read_ptr + remain_len > write_ptr) {
