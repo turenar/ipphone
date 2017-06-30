@@ -2,8 +2,8 @@ CXX:
   - g++
   - clang++
 BUILD_OPTIONS:
-  - --buildtype=debug
-  - --buildtype=release -Db_ndebug=true
+  - --buildtype=debug -Db_sanitize=address
+  - --buildtype=release -Db_ndebug=true -Db_sanitize=address
   - --buildtype=release -Db_ndebug=true --unity
 #  - --buildtype=release -Db_ndebug=true -Db_lto=true
 
