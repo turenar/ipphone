@@ -21,10 +21,11 @@ namespace ipp {
 					std::mutex m;
 					std::condition_variable cv;
 					std::atomic<bool> ready(false);
+					std::atomic<bool> write_finished(false);
 					std::atomic<int> read_count(0);
 					std::atomic<int> write_count(0);
 
-					std::thread a([&m, &cv, &ready, &buf, &write_count] {
+					std::thread a([&m, &cv, &ready, &buf, &write_count, &write_finished] {
 						{
 							std::unique_lock<std::mutex> lock(m);
 							cv.wait(lock, [&ready]() -> bool { return ready; });
@@ -36,8 +37,13 @@ namespace ipp {
 							wc += buf.write(dat, std::extent<decltype(dat)>::value);
 						}
 						write_count = wc;
+						write_finished = true;
+						{
+							std::lock_guard<std::mutex> lock(m);
+							cv.notify_one();
+						}
 					});
-					std::thread b([&m, &cv, &ready, &buf, &read_count, &a] {
+					std::thread b([&m, &cv, &ready, &buf, &read_count, &write_finished] {
 						{
 							std::unique_lock<std::mutex> lock(m);
 							cv.wait(lock, [&ready]() -> bool { return ready; });
@@ -49,9 +55,12 @@ namespace ipp {
 						for (int i = 0; i < loop_count; i++) {
 							rc += buf.read(dat, std::extent<decltype(dat)>::value);
 						}
-						if (a.joinable()) {
-							a.join();
+
+						{
+							std::unique_lock<std::mutex> lock(m);
+							cv.wait(lock, [&write_finished]() -> bool { return write_finished; });
 						}
+						rc += buf.read(dat, std::extent<decltype(dat)>::value);
 						read_count = rc;
 					});
 					{
