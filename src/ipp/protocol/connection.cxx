@@ -8,8 +8,9 @@ namespace ipp {
 		namespace {
 			template <typename MessageType, typename Dispatcher>
 			inline bool dispatch(connection& con, const std::uint8_t* msg, std::size_t len, Dispatcher dispatcher) {
-				using is_empty_body = std::integral_constant<bool, std::is_empty<MessageType>::value>;
-				std::size_t required_len = sizeof(message::message_packer<MessageType, is_empty_body>);
+				std::size_t required_len = +
+				                           std::is_empty<MessageType>::value ?0:sizeof(MessageType);
+				;
 				if (len < required_len) {
 					LOG(WARNING) << "broken message: required_size=" << required_len << ", actual_size=" << len;
 					return false;

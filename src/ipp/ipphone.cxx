@@ -9,6 +9,7 @@ namespace ipp {
 	namespace {
 		std::unique_ptr<channel::channel_wrapper>
 		create_channel(ipphone& ipp, std::uint32_t ch_id, protocol::channel::channel_type ty) {
+			LOG(WARNING) << "creating channel" << ch_id;
 			switch (ty) {
 				case protocol::channel::channel_type::sound:
 					return std::make_unique<channel::sound_channel>(ipp, ch_id, ty);
@@ -18,12 +19,10 @@ namespace ipp {
 		}
 	}
 
-	ipphone::ipphone(bool listen_mode) : _manager(network::socket(), *this) {
+	ipphone::ipphone(bool reader_enabled) : _manager(network::socket(), *this) {
 		_rnd.seed(static_cast<unsigned long>(std::chrono::system_clock::now().time_since_epoch().count()));
 		_writer = std::make_unique<device::sox_write_handler>();
-		if (listen_mode) {
-			_reader = std::make_unique<device::sox_read_handler>();
-		}
+		_reader_enabled = reader_enabled;
 	}
 
 	ipphone::~ipphone() {}
@@ -35,17 +34,15 @@ namespace ipp {
 	void ipphone::connect(const std::string& ip, std::uint16_t port) {
 		network::socket_address addr;
 		addr.set_address(ip.c_str()).set_port(port);
-		_manager.connect(addr)
-				.protocol().channel_open(1, protocol::channel::channel_type::sound,
-				                         protocol::channel::channel_flag::none);
+		_manager.connect(addr);
 	}
 
-	void ipphone::update_frame(bool listen) {
+	void ipphone::update_frame() {
 		_manager.consume_socket();
 		for (auto& channel : _channels) {
 			channel.second->flush_packets();
 		}
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	bool ipphone::open_channel(protocol::channel::channel_type ty, protocol::channel::channel_flag fl) {
@@ -57,10 +54,11 @@ namespace ipp {
 				connection.second.protocol().channel_open(ch_id, ty, fl);
 			}
 			return true;
+		} else {
+			LOG(ERROR) << "channel_type is not found" << static_cast<int>(ty);
+			return false;
 		}
-		return false;
 	}
-
 
 	void ipphone::on_keep_alive(protocol::connection&, const protocol::message::keep_alive*, std::size_t) {}
 
@@ -77,15 +75,21 @@ namespace ipp {
 	}
 
 	void ipphone::on_channel_data(protocol::connection&, const protocol::message::channel_data* dat, std::size_t len) {
-		_channels.find(dat->ch_id);
-		const std::uint8_t* pointer = reinterpret_cast<const std::uint8_t*>(dat) + sizeof(*dat);
-		_writer->buffer().write(reinterpret_cast<const std::uint16_t*>(pointer),
-		                        (len - sizeof(*dat)) / sizeof(std::uint16_t));
+		auto it = _channels.find(dat->ch_id);
+		if (it != _channels.end()) {
+			it->second->receive(reinterpret_cast<const std::uint8_t*>(dat) + sizeof(*dat),
+			                    static_cast<std::uint16_t>(len - sizeof(*dat)));
+		} else {
+			LOG(WARNING) << "channel id?" << dat->ch_id;
+		}
 	}
 
 	void ipphone::on_channel_close(protocol::connection&, const protocol::message::channel_close*, std::size_t) {}
 
 	const std::unique_ptr<device::handler>& ipphone::reader_device() {
+		if (!_reader && _reader_enabled) {
+			_reader = std::make_unique<device::sox_read_handler>();
+		}
 		return _reader;
 	}
 

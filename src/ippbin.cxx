@@ -34,15 +34,15 @@ int main(int argc, char** argv) {
 		if (argc >= 2) {
 			ipp::ipphone ip(false);
 			ip.connect("127.0.0.1", 12345);
+			ip.open_channel(ipp::protocol::channel::channel_type::sound, ipp::protocol::channel::channel_flag::none);
 			while (true) {
-				ip.update_frame(false);
+				ip.update_frame();
 			}
 		} else {
 			ipp::ipphone ip(true);
 			ip.bind("127.0.0.1", 12345);
-			ip.open_channel(ipp::protocol::channel::channel_type::sound, ipp::protocol::channel::channel_flag::none);
 			while (true) {
-				ip.update_frame(true);
+				ip.update_frame();
 			}
 		}
 	} catch (boost::exception& ex) {

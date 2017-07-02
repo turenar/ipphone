@@ -18,20 +18,30 @@ namespace ipp {
 			}
 			const sound_header* header = reinterpret_cast<const sound_header*>(buf);
 			const std::uint8_t* body = buf + sizeof(sound_header);
-			_ipp.writer_device()->buffer().write(reinterpret_cast<const std::uint16_t*>(body), header->samples);
+			_ipp.writer_device()->buffer().write(reinterpret_cast<const std::uint16_t*>(body), header->samples << 1);
 		}
 
 		void sound_channel::flush_packets() {
-			while (true) {
-				std::uint16_t buf[48000 * 2 / 10];
-				std::size_t len = _ipp.reader_device()->buffer().read(buf, 4800 * 2);
-				if (len == 0) {
-					break;
-				}
-				for (auto& pair : _ipp.connection_manager().get_connections()) {
-					pair.second.protocol().channel_data(1, reinterpret_cast<std::uint8_t*>(buf),
-					                                    static_cast<std::uint16_t>(len * sizeof(std::uint16_t)));
-				}
+			using protocol::channel::sound_header;
+			std::uint8_t buf[sizeof(sound_header) + 4800 * 2 * sizeof(std::uint16_t)];
+			static_assert(sizeof(sound_header) == 4, "aho");
+			buf[0] = static_cast<std::uint8_t>(protocol::channel::sound_encode_type::raw16);
+			buf[1] = 0;
+
+			const std::unique_ptr<device::handler>& dev = _ipp.reader_device();
+			if (!dev) {
+				return;
+			}
+			std::size_t len = dev->buffer().read(
+					reinterpret_cast<std::uint16_t*>(buf + sizeof(sound_header)), 4800 * 2);
+			if (len == 0) {
+				return;
+			}
+			buf[2] = (len >> 1) & 0xff;
+			buf[3] = len >> 9;
+			for (auto& pair : _ipp.connection_manager().get_connections()) {
+				pair.second.protocol().channel_data(_channel_id, reinterpret_cast<std::uint8_t*>(buf),
+				                                    sizeof(sound_header) + len * sizeof(std::uint16_t));
 			}
 		}
 

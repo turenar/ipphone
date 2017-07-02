@@ -35,8 +35,13 @@ namespace ipp {
 		}
 
 		sox_read_handler::sox_read_handler() {
+			sox::signalinfo sig;
+			sig.channels = channels;
+			sig.length = 0;
+			sig.precision = 0;
+			sig.rate = samples_per_second;
 			_worker = std::thread(
-					read_worker(*this, sox::format::open_device_for_read("default", nullptr, nullptr, "pulseaudio")));
+					read_worker(*this, sox::format::open_device_for_read("default", &sig, nullptr, "pulseaudio")));
 		}
 
 		bool sox_read_handler::shutting_down() const {

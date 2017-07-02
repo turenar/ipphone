@@ -17,16 +17,19 @@ namespace ipp {
 					std::array<std::uint16_t, handler::default_buffered_samples> encoded;
 					std::array<sox::sample_t, handler::default_buffered_samples> buf;
 					std::size_t count = 0;
+					std::ofstream fs("written.dat");
 					while (!_handler.shutting_down()) {
 						std::size_t read_len = buffer.read(encoded.begin(), encoded.size(),
 						                                   std::chrono::milliseconds(20));
 						if (read_len > 0) {
 							for (std::size_t i = 0; i < read_len; i++) {
-								buf[i] = encoded[i] << 16;
+								sox::sample_t snd = encoded[i];
+								buf[i] = snd << 16;
 							}
 							_format.write(buf.begin(), read_len);
 							LOG(DEBUG) << '[' << (count += read_len) << "] written len " << read_len;
 						}
+						fs.write(reinterpret_cast<char*>(buf.begin()), read_len * sizeof(sox::sample_t));
 					}
 				}
 

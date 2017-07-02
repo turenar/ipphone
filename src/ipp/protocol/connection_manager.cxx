@@ -7,11 +7,15 @@
 namespace ipp {
 	namespace protocol {
 		namespace {
+			constexpr struct {
+				message::message_type ty;
+				message::connect c;
+			} expected_connected = {message::message_type::connect,
+			                        {IPPP_PROTOCOL_NAME, ippp::protocol_version, ippp::protocol_revision}};
+
 			bool is_connection_packet(std::uint8_t* message, std::size_t len) {
-				auto expected = message::pack(
-						message::connect{IPPP_PROTOCOL_NAME, ippp::protocol_version, ippp::protocol_revision});
-				return len >= sizeof(expected)
-				       && 0 == ::memcmp(message, &expected, sizeof(expected));
+				return len >= sizeof(expected_connected)
+				       && 0 == ::memcmp(message, &expected_connected, sizeof(expected_connected));
 			}
 
 			std::size_t parse_packet(std::uint8_t* buf, std::size_t len) {
