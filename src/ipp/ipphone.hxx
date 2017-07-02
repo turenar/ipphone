@@ -13,13 +13,17 @@
 namespace ipp {
 	class ipphone : public protocol::protocol_listener {
 	public:
+		using channel_map_type = std::unordered_map<std::uint32_t, std::unique_ptr<channel::channel_wrapper>>;
+
 		ipphone(bool);
 		virtual ~ipphone();
 
 		void bind(const std::string& ip, std::uint16_t port);
 		void connect(const std::string& ip, std::uint16_t port);
 		void update_frame(bool listen);
+
 		bool open_channel(protocol::channel::channel_type, protocol::channel::channel_flag);
+		channel_map_type& channels();
 
 		virtual void on_keep_alive(protocol::connection&, const protocol::message::keep_alive*, std::size_t) override;
 		virtual void on_connect(protocol::connection&, const protocol::message::connect*, std::size_t) override;
@@ -39,7 +43,7 @@ namespace ipp {
 	private:
 		std::mt19937 _rnd;
 		protocol::connection_manager _manager;
-		std::unordered_map<std::uint32_t, std::unique_ptr<channel::channel_wrapper>> _channels;
+		channel_map_type _channels;
 		std::unique_ptr<device::handler> _reader;
 		std::unique_ptr<device::handler> _writer;
 	};

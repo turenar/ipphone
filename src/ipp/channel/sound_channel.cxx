@@ -22,14 +22,25 @@ namespace ipp {
 		}
 
 		void sound_channel::flush_packets() {
+			const std::unique_ptr<device::handler>& dev = _ipp.reader_device();
+			if (!dev) {
+				return;
+			}
+			std::uint32_t ch_id = 0;
+			for (auto& channels : _ipp.channels()) {
+				if (channels.second->type() == protocol::channel::channel_type::sound) {
+					ch_id = channels.second->ch_id();
+				}
+			}
 			while (true) {
 				std::uint16_t buf[48000 * 2 / 10];
-				std::size_t len = _ipp.reader_device()->buffer().read(buf, 4800 * 2);
+				std::size_t len = dev->buffer().read(buf, 4800 * 2);
 				if (len == 0) {
 					break;
 				}
+
 				for (auto& pair : _ipp.connection_manager().get_connections()) {
-					pair.second.protocol().channel_data(1, reinterpret_cast<std::uint8_t*>(buf),
+					pair.second.protocol().channel_data(ch_id, reinterpret_cast<std::uint8_t*>(buf),
 					                                    static_cast<std::uint16_t>(len * sizeof(std::uint16_t)));
 				}
 			}

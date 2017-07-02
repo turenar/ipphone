@@ -61,6 +61,9 @@ namespace ipp {
 		return false;
 	}
 
+	ipphone::channel_map_type& ipphone::channels() {
+		return _channels;
+	}
 
 	void ipphone::on_keep_alive(protocol::connection&, const protocol::message::keep_alive*, std::size_t) {}
 

@@ -46,8 +46,17 @@ namespace ipp {
 					             sox::format::open_device_for_write("default", &sig, nullptr, "pulseaudio", nullptr)));
 		}
 
+		sox_write_handler::~sox_write_handler() {
+			shutdown();
+			_worker.join();
+		}
+
+		void sox_write_handler::shutdown() {
+			_shutting_down = true;
+		}
+
 		bool sox_write_handler::shutting_down() const {
-			return false; // FIXME
+			return _shutting_down; // FIXME
 		}
 	}
 }

@@ -1,4 +1,5 @@
 #include "ipp/protocol/connection.hxx"
+#include <cstring>
 #include "ipp/logger/logger.hxx"
 #include "ipp/protocol/protocol_listener.hxx"
 #include "ipp/protocol/message/message_connection.hxx"
@@ -6,6 +7,26 @@
 namespace ipp {
 	namespace protocol {
 		namespace {
+			bool is_connection_packet(std::uint8_t* message, std::size_t len) {
+				auto expected = message::pack(
+						message::connect{IPPP_PROTOCOL_NAME, ippp::protocol_version, ippp::protocol_revision});
+				return len >= sizeof(expected)
+				       && 0 == ::memcmp(message, &expected, sizeof(expected));
+			}
+
+			std::size_t parse_packet(std::uint8_t* buf, std::size_t len) {
+				if (len < sizeof(packet::packet_header)) {
+					LOG(ERROR) << "corrupted packet; received len=" << len;
+					return 0;
+				}
+				packet::packet_header* header = reinterpret_cast<packet::packet_header*>(buf);
+				if (len < header->size) {
+					LOG(ERROR) << "corrupted packet; received len=" << len << ", packet len=" << header->size;
+					return 0;
+				}
+				return header->size;
+			}
+
 			template <typename MessageType, typename Dispatcher>
 			inline bool dispatch(connection& con, const std::uint8_t* msg, std::size_t len, Dispatcher dispatcher) {
 				using is_empty_body = std::integral_constant<bool, std::is_empty<MessageType>::value>;
@@ -19,8 +40,8 @@ namespace ipp {
 			}
 		}
 
-		connection::connection(network::socket_connection&& con, protocol_listener& listener)
-				: _protocol(con), _listener(listener) {
+		connection::connection(network::socket_connection con, protocol_listener& listener)
+				: _con(con), _protocol(con), _listener(listener) {
 		}
 
 		protocol_listener& connection::get_listener() {
@@ -47,6 +68,23 @@ namespace ipp {
 				default:
 					LOG(WARNING) << "unknown message type: " << static_cast<std::uint8_t>(type);
 					return false;
+			}
+		}
+
+		void connection::consume() {
+			std::uint8_t buf[65536];
+			while (_con.recvable(std::chrono::milliseconds(0))) {
+				std::size_t len = _con.recv(buf, sizeof(buf));
+				if (len == 0) {
+					break;
+				}
+				std::size_t message_len = parse_packet(buf, len);
+				if (message_len <= 0) {
+					continue; // broken packet
+				}
+
+				std::uint8_t* message = buf + sizeof(packet::packet_header);
+				parse_message(message, message_len);
 			}
 		}
 

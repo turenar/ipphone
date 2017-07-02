@@ -39,8 +39,17 @@ namespace ipp {
 					read_worker(*this, sox::format::open_device_for_read("default", nullptr, nullptr, "pulseaudio")));
 		}
 
+		sox_read_handler::~sox_read_handler() {
+			shutdown();
+			_worker.join();
+		}
+
+		void sox_read_handler::shutdown() {
+			_shutting_down = true;
+		}
+
 		bool sox_read_handler::shutting_down() const {
-			return false; // FIXME
+			return _shutting_down; // FIXME
 		}
 	}
 }
