@@ -6,6 +6,7 @@ gtest_inc = gtest.get_variable('incdir')
 test_sources = [
 	'ipp/util/buffer_test.cxx',
 	'ipp/util/buffer_test_mt.cxx',
+	'ipp/util/buffer_test_mt_timeout.cxx',
 ]
 
 gtest_lib = static_library('gtest', [gtest_libsrc],

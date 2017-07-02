@@ -6,6 +6,8 @@
 #include <cstring>
 #include <memory>
 
+#include "ipp/logger/logger.hxx"
+
 namespace ipp {
 	namespace util {
 		template <typename ElementType>
@@ -23,7 +25,9 @@ namespace ipp {
 		inline std::size_t
 		buffer<ElementType>::write(const element_type* elements, std::size_t len, timeout_type timeout) {
 			return write(elements, len, [this, timeout](std::unique_lock<std::mutex>& mutex) {
-				return this->_cv.wait_for(mutex, timeout, [this] { return !this->full_without_lock(); });
+				return this->_cv.wait_for(mutex, timeout, [this] {
+					return !this->full_without_lock();
+				});
 			});
 		}
 
@@ -35,7 +39,9 @@ namespace ipp {
 		template <typename ElementType>
 		inline std::size_t buffer<ElementType>::read(element_type* elements, std::size_t len, timeout_type timeout) {
 			return read(elements, len, [this, timeout](std::unique_lock<std::mutex>& mutex) {
-				return this->_cv.wait_for(mutex, timeout, [this] { return !this->empty_without_lock(); });
+				return this->_cv.wait_for(mutex, timeout, [this] {
+					return !this->empty_without_lock();
+				});
 			});
 		}
 
@@ -80,6 +86,7 @@ namespace ipp {
 				write_ptr += write_len;
 			}
 			_write_ptr = write_ptr;
+			_cv.notify_all();
 			return write_len;
 		}
 
@@ -123,6 +130,7 @@ namespace ipp {
 			}
 			_read_ptr = read_ptr;
 			_is_full = false;
+			_cv.notify_all();
 			return read_len;
 		}
 
@@ -146,6 +154,20 @@ namespace ipp {
 		template <typename ElementType>
 		inline bool buffer<ElementType>::full_without_lock() const {
 			return _is_full;
+		}
+
+		template <typename ElementType>
+		inline std::size_t buffer<ElementType>::buffered() const {
+			std::lock_guard<std::mutex> lock{_lock};
+			return _read_ptr == _write_ptr
+			       ? (_is_full ? _buf_size : 0)
+			       : (_read_ptr < _write_ptr ? (_write_ptr - _read_ptr)
+			                                 : (_buf_size + _write_ptr - _read_ptr));
+		}
+
+		template <typename ElementType>
+		inline std::size_t buffer<ElementType>::buffer_size() const {
+			return _buf_size;
 		}
 	}
 }

@@ -22,6 +22,8 @@ namespace ipp {
 			std::size_t read(element_type*, std::size_t len);
 			std::size_t read(element_type*, std::size_t len, timeout_type timeout);
 
+			std::size_t buffer_size() const;
+			std::size_t buffered() const;
 			bool empty() const;
 			bool full() const;
 
