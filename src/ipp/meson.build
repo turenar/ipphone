@@ -5,6 +5,9 @@ g3logger_dep = dependency('g3logger',
 )
 
 libipphone_files = [
+	'device/handler.cxx',
+	'device/sox_read_handler.cxx',
+	'device/sox_write_handler.cxx',
 	'error_info.cxx',
 	'logger/log_console_sink.cxx',
 	'network/socket.cxx',

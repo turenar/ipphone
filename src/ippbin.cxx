@@ -9,6 +9,7 @@
 #include "ipp/network/socket.hxx"
 #include "ipp/protocol/ippp.hxx"
 #include "ipp/protocol/protocol_listener.hxx"
+#include "ipp/util/buffer.hxx"
 
 namespace {
 	auto prepare_logger() -> decltype(g3::LogWorker::createLogWorker()) {
@@ -28,15 +29,16 @@ namespace {
 
 int main(int argc, char** argv) {
 	auto worker = prepare_logger();
+	ipp::util::buffer<std::uint16_t> buf(4);
 	try {
 		if (argc >= 2) {
-			ipp::ipphone ip;
+			ipp::ipphone ip(false);
 			ip.connect("127.0.0.1", 12345);
 			while (true) {
 				ip.update_frame(false);
 			}
 		} else {
-			ipp::ipphone ip;
+			ipp::ipphone ip(true);
 			ip.bind("127.0.0.1", 12345);
 			while (true) {
 				ip.update_frame(true);

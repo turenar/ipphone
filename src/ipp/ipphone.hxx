@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ipp/device/handler.hxx"
+#include <memory>
 #include "ipp/protocol/connection_manager.hxx"
 #include "ipp/protocol/protocol_listener.hxx"
 #include "ipp/protocol/message/message_channel.hxx"
@@ -9,7 +11,7 @@
 namespace ipp {
 	class ipphone : public protocol::protocol_listener {
 	public:
-		ipphone();
+		ipphone(bool);
 		virtual ~ipphone();
 
 		void bind(const std::string& ip, std::uint16_t port);
@@ -29,6 +31,7 @@ namespace ipp {
 
 	private:
 		protocol::connection_manager _manager;
-		sox::format _input;
+		std::unique_ptr<device::handler> _reader;
+		std::unique_ptr<device::handler> _writer;
 	};
 }
