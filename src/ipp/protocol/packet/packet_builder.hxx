@@ -26,10 +26,12 @@ namespace ipp {
 			private:
 				static constexpr std::size_t packet_header_size = sizeof(packet_header);
 
+				std::uint16_t _checksum = 0;
+				std::uint16_t _read_ptr;
+				std::uint16_t _write_ptr;
 				std::uint8_t _seq = 0;
 				std::uint8_t _buf[packet_max_size];
-				std::uint16_t _read_ptr ;
-				std::uint16_t _write_ptr;
+
 			};
 
 			template <typename T, std::enable_if_t<std::is_integral<T>::value, std::nullptr_t>>

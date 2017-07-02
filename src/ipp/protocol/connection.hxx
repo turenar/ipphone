@@ -2,6 +2,7 @@
 
 #include "ipp/network/socket_connection.hxx"
 #include "ipp/protocol/ippp.hxx"
+#include "ipp/util/buffer.hxx"
 
 namespace ipp {
 	namespace protocol {
@@ -23,6 +24,7 @@ namespace ipp {
 		private:
 			ippp _protocol;
 			network::socket_connection _con;
+			util::buffer<std::uint8_t> _buf;
 			listener_type& _listener;
 		};
 	}

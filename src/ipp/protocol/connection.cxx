@@ -41,7 +41,7 @@ namespace ipp {
 		}
 
 		connection::connection(network::socket_connection con, protocol_listener& listener)
-				: _con(con), _protocol(con), _listener(listener) {
+				: _con(con), _protocol(con), _buf(_listener(listener) {
 		}
 
 		protocol_listener& connection::get_listener() {
