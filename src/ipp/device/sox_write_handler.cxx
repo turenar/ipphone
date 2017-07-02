@@ -20,14 +20,15 @@ namespace ipp {
 					std::ofstream fs("written.dat");
 					while (!_handler.shutting_down()) {
 						std::size_t read_len = buffer.read(encoded.begin(), encoded.size(),
-						                                   std::chrono::milliseconds(20));
+						                                   std::chrono::milliseconds(10));
 						if (read_len > 0) {
 							for (std::size_t i = 0; i < read_len; i++) {
 								sox::sample_t snd = encoded[i];
 								buf[i] = snd << 16;
 							}
 							_format.write(buf.begin(), read_len);
-							LOG(DEBUG) << '[' << (count += read_len) << "] written len " << read_len;
+							LOG(DEBUG) << '[' << (count += read_len) << "] written len " << read_len
+							           << ", buffered" << buffer.buffered();
 						}
 						fs.write(reinterpret_cast<char*>(buf.begin()), read_len * sizeof(sox::sample_t));
 					}

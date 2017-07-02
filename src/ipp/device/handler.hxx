@@ -10,7 +10,7 @@ namespace ipp {
 			static constexpr std::size_t samples_per_second = 48000;
 			static constexpr std::size_t channels = 2;
 			static constexpr std::size_t default_buffered_samples = 4096 * channels;
-			static constexpr std::size_t default_buffer_size = default_buffered_samples * 64;
+			static constexpr std::size_t default_buffer_size = default_buffered_samples * 24;
 
 			handler(std::size_t buffer_size = default_buffer_size);
 
