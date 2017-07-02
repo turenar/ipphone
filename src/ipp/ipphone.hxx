@@ -1,7 +1,9 @@
 #pragma once
 
-#include "ipp/device/handler.hxx"
 #include <memory>
+#include <random>
+#include "ipp/channel/channel_wrapper.hxx"
+#include "ipp/device/handler.hxx"
 #include "ipp/protocol/connection_manager.hxx"
 #include "ipp/protocol/protocol_listener.hxx"
 #include "ipp/protocol/message/message_channel.hxx"
@@ -17,6 +19,7 @@ namespace ipp {
 		void bind(const std::string& ip, std::uint16_t port);
 		void connect(const std::string& ip, std::uint16_t port);
 		void update_frame(bool listen);
+		bool open_channel(protocol::channel::channel_type, protocol::channel::channel_flag);
 
 		virtual void on_keep_alive(protocol::connection&, const protocol::message::keep_alive*, std::size_t) override;
 		virtual void on_connect(protocol::connection&, const protocol::message::connect*, std::size_t) override;
@@ -29,8 +32,14 @@ namespace ipp {
 		virtual void
 		on_channel_close(protocol::connection&, const protocol::message::channel_close*, std::size_t) override;
 
+		const std::unique_ptr<device::handler>& reader_device();
+		const std::unique_ptr<device::handler>& writer_device();
+		protocol::connection_manager& connection_manager();
+
 	private:
+		std::mt19937 _rnd;
 		protocol::connection_manager _manager;
+		std::unordered_map<std::uint32_t, std::unique_ptr<channel::channel_wrapper>> _channels;
 		std::unique_ptr<device::handler> _reader;
 		std::unique_ptr<device::handler> _writer;
 	};

@@ -4,10 +4,9 @@
 
 namespace ipp {
 	namespace protocol {
-		namespace message {
+		namespace channel {
 			enum class channel_flag : std::uint8_t {
 				none = 0,
-				receivable = 1,
 			};
 		}
 	}

@@ -1,7 +1,7 @@
-#include <array>
-#include "sox/format.hxx"
 #include "ipp/device/sox_read_handler.hxx"
+#include <array>
 #include "ipp/logger/logger.hxx"
+#include "sox/format.hxx"
 
 namespace ipp {
 	namespace device {
@@ -19,11 +19,13 @@ namespace ipp {
 
 					while (!_handler.shutting_down()) {
 						std::size_t read_len = _format.read(buf.begin(), buf.size());
-						for (std::size_t i = 0; i < read_len; i++) {
-							encoded[i] = static_cast<std::uint16_t>(buf[i] >> 16);
+						if (read_len > 0) {
+							for (std::size_t i = 0; i < read_len; i++) {
+								encoded[i] = static_cast<std::uint16_t>(buf[i] >> 16);
+							}
+							buffer.write(encoded.begin(), read_len);
+							LOG(DEBUG) << '[' << (count += read_len) << "] read_len " << read_len;
 						}
-						buffer.write(encoded.begin(), read_len);
-						LOG(DEBUG) << '[' << (count += read_len) << "] read_len " << read_len;
 					}
 				}
 

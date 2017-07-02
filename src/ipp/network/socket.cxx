@@ -6,13 +6,13 @@
 namespace ipp {
 	namespace network {
 		namespace {
-			void debug_recv_send(const char* ev, const std::uint8_t* data, std::size_t buflen) {
+			void debug_recv_send(const char* ev, const std::uint8_t* data, std::size_t buflen, int fd) {
 				(void) ev;
 				(void) data;
 				(void) buflen;
 #ifndef NDEBUG
 				std::ostringstream buf;
-				buf << ev << ": " << std::hex;
+				buf << ev << ": fd=" << fd << std::hex;
 				const std::uint8_t* p = data;
 				for (std::size_t i = 0; i < buflen; i += 16) {
 					std::size_t colend = std::min(i + 16, buflen);
@@ -67,7 +67,7 @@ namespace ipp {
 		}
 
 		std::size_t socket::send(const std::uint8_t* data, std::size_t len, const socket_address& addr) {
-			debug_recv_send("send", data, len);
+			debug_recv_send("send", data, len, _fd);
 			ssize_t result = ::sendto(_fd, data, len, 0, addr.get_native_address(), addr.get_native_size());
 			if (result < 0) {
 				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
@@ -82,7 +82,7 @@ namespace ipp {
 			if (result < 0) {
 				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
 			}
-			debug_recv_send("recv", buf, static_cast<std::size_t>(result));
+			debug_recv_send("recv", buf, static_cast<std::size_t>(result), _fd);
 			addr = std::move(tmp_addr);
 			return static_cast<std::size_t>(result);
 		}

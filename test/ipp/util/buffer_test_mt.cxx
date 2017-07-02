@@ -1,6 +1,6 @@
-#include <gtest/gtest.h>
 #include <type_traits>
 #include <g3log/logworker.hpp>
+#include <gtest/gtest.h>
 #include "ipp/logger/log_console_sink.hxx"
 #include "ipp/util/buffer.hxx"
 

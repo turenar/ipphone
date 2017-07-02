@@ -1,8 +1,8 @@
+#include "ipp/device/sox_write_handler.hxx"
 #include <array>
 #include <fstream>
-#include "sox/format.hxx"
-#include "ipp/device/sox_write_handler.hxx"
 #include "ipp/logger/logger.hxx"
+#include "sox/format.hxx"
 
 namespace ipp {
 	namespace device {
@@ -16,16 +16,17 @@ namespace ipp {
 					handler::buffer_t& buffer = _handler.buffer();
 					std::array<std::uint16_t, handler::default_buffered_samples> encoded;
 					std::array<sox::sample_t, handler::default_buffered_samples> buf;
-					std::thread::id tid = std::this_thread::get_id();
 					std::size_t count = 0;
 					while (!_handler.shutting_down()) {
 						std::size_t read_len = buffer.read(encoded.begin(), encoded.size(),
 						                                   std::chrono::milliseconds(20));
-						for (std::size_t i = 0; i < read_len; i++) {
-							buf[i] = encoded[i] << 16;
+						if (read_len > 0) {
+							for (std::size_t i = 0; i < read_len; i++) {
+								buf[i] = encoded[i] << 16;
+							}
+							_format.write(buf.begin(), read_len);
+							LOG(DEBUG) << '[' << (count += read_len) << "] written len " << read_len;
 						}
-						_format.write(buf.begin(), read_len);
-						LOG(DEBUG) << '[' << (count += read_len) << "] written len " << read_len;
 					}
 				}
 

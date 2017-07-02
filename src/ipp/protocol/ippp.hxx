@@ -2,8 +2,8 @@
 
 #include <memory>
 #include "ipp/network/socket_connection.hxx"
-#include "ipp/protocol/message/channel_flag.hxx"
-#include "ipp/protocol/message/channel_type.hxx"
+#include "ipp/protocol/channel/channel_flag.hxx"
+#include "ipp/protocol/channel/channel_type.hxx"
 #include "ipp/protocol/packet/packet.hxx"
 #include "ipp/protocol/packet/packet_builder.hxx"
 
@@ -23,9 +23,9 @@ namespace ipp {
 			void connect();
 			void disconnect();
 
-			void channel_open(std::uint8_t ch_id, message::channel_type ch_type, message::channel_flag ch_flag);
-			void channel_data(std::uint8_t ch_id, const std::uint8_t* data, std::uint16_t len);
-			void channel_close(std::uint8_t ch_id);
+			void channel_open(std::uint32_t ch_id, channel::channel_type ch_type, channel::channel_flag ch_flag);
+			void channel_data(std::uint32_t ch_id, const std::uint8_t* data, std::uint16_t len);
+			void channel_close(std::uint32_t ch_id);
 
 		private:
 			network::socket_connection _con;

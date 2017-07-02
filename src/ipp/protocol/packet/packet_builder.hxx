@@ -10,9 +10,9 @@ namespace ipp {
 			public:
 				packet_builder();
 				packet_builder(const packet_builder&) = default;
-				packet_builder(packet_builder&&) = default;
+				packet_builder(packet_builder&&) noexcept = default;
 				packet_builder& operator=(const packet_builder&) = default;
-				packet_builder& operator=(packet_builder&&) = default;
+				packet_builder& operator=(packet_builder&&) noexcept = default;
 
 				template <typename T, std::enable_if_t<std::is_integral<T>::value, std::nullptr_t> = nullptr>
 				packet_builder& write(T);
@@ -26,6 +26,7 @@ namespace ipp {
 			private:
 				static constexpr std::size_t packet_header_size = sizeof(packet_header);
 
+				std::uint8_t _seq = 0;
 				std::uint8_t _buf[packet_max_size];
 				std::uint16_t _read_ptr ;
 				std::uint16_t _write_ptr;

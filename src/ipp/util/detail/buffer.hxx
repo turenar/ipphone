@@ -1,10 +1,10 @@
 #pragma once
 
 #include <atomic>
+#include <condition_variable>
 #include <cstdint>
 #include <cstring>
 #include <memory>
-#include <condition_variable>
 
 namespace ipp {
 	namespace util {

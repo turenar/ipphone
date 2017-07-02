@@ -23,18 +23,18 @@ namespace ipp {
 					.send(_con);
 		}
 
-		void ippp::channel_open(std::uint8_t ch_id, message::channel_type ch_type, message::channel_flag ch_flag) {
+		void ippp::channel_open(std::uint32_t ch_id, channel::channel_type ch_type, channel::channel_flag ch_flag) {
 			_packet.write(message::pack(message::channel_open{ch_id, ch_type, ch_flag, 0}))
 					.send(_con);
 		}
 
-		void ippp::channel_data(std::uint8_t ch_id, const std::uint8_t* data, std::uint16_t len) {
+		void ippp::channel_data(std::uint32_t ch_id, const std::uint8_t* data, std::uint16_t len) {
 			_packet.write(message::pack(message::channel_data{ch_id}))
 					.write(data, len)
 					.send(_con);
 		}
 
-		void ippp::channel_close(std::uint8_t ch_id) {
+		void ippp::channel_close(std::uint32_t ch_id) {
 			_packet.write(message::pack(message::channel_close{ch_id}))
 					.send(_con);
 		}

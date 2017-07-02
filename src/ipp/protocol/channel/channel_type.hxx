@@ -4,11 +4,10 @@
 
 namespace ipp {
 	namespace protocol {
-		namespace message {
+		namespace channel {
 			enum class channel_type : std::uint8_t {
 				unknown,
-				sound_mono,
-				sound_stereo,
+				sound,
 			};
 		}
 	}

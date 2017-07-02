@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ipp/device/handler.hxx"
 #include <thread>
+#include "ipp/device/handler.hxx"
 
 namespace ipp {
 	namespace device {

@@ -35,8 +35,9 @@ namespace ipp {
 		connection& connection_manager::connect(const network::socket_address& addr) {
 			auto iterator = _connection_map.find(addr);
 			if (iterator == _connection_map.end()) {
-				const connection& new_connection = connection(network::socket_connection(_sock, addr), _listener);
-				iterator = _connection_map.emplace(addr, new_connection).first;
+				connection new_connection{network::socket_connection(_sock, addr), _listener};
+				_connection_map.emplace(addr, std::move(new_connection));
+				iterator = _connection_map.find(addr);
 				iterator->second.protocol().connect();
 			}
 			return iterator->second;
