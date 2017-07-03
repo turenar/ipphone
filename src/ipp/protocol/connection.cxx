@@ -16,7 +16,7 @@ namespace ipp {
 					return 0;
 				}
 				packet::packet_header* header = reinterpret_cast<packet::packet_header*>(buf);
-				if (len < header->size) {
+				if (len < sizeof(packet::packet_header) + header->size) {
 //					LOG(ERROR) << "corrupted packet; received len=" << len << ", packet len=" << header->size;
 					return 0;
 				}
