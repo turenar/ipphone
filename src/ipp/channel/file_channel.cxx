@@ -7,7 +7,7 @@
 namespace ipp {
 	namespace channel {
 		file_channel::file_channel(ipphone& ipp, uint32_t ch_id, channel_type type, std::string file_name)
-				: channel_wrapper(ch_id), _ipp(ipp), _ch_type(type) {
+				: channel_wrapper(ch_id, type), _ipp(ipp) {
 			// prepare device
 			ipp.reader_device();
 			ipp.writer_device();
