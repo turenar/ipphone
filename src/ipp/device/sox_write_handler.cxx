@@ -16,8 +16,6 @@ namespace ipp {
 					handler::buffer_t& buffer = _handler.buffer();
 					std::array<std::uint16_t, handler::default_buffered_samples> encoded;
 					std::array<sox::sample_t, handler::default_buffered_samples> buf;
-					std::size_t count = 0;
-					std::ofstream fs("written.dat");
 					while (!_handler.shutting_down()) {
 						std::size_t read_len = buffer.read(encoded.begin(), encoded.size(),
 						                                   std::chrono::milliseconds(10));
@@ -30,7 +28,6 @@ namespace ipp {
 //							LOG(DEBUG) << '[' << (count += read_len) << "] written len " << read_len
 //							           << ", buffered" << buffer.buffered();
 						}
-						fs.write(reinterpret_cast<char*>(buf.begin()), read_len * sizeof(sox::sample_t));
 					}
 				}
 

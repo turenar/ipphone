@@ -15,7 +15,6 @@ namespace ipp {
 					handler::buffer_t& buffer = _handler.buffer();
 					std::array<sox::sample_t, handler::default_buffered_samples> buf;
 					std::array<std::uint16_t, handler::default_buffered_samples> encoded;
-					std::size_t count = 0;
 
 					while (!_handler.shutting_down()) {
 						std::size_t read_len = _format.read(buf.begin(), buf.size());

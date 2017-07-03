@@ -6,32 +6,6 @@
 
 namespace ipp {
 	namespace protocol {
-		namespace {
-			constexpr struct {
-				message::message_type ty;
-				message::connect c;
-			} expected_connected = {message::message_type::connect,
-			                        {IPPP_PROTOCOL_NAME, ippp::protocol_version, ippp::protocol_revision}};
-
-			bool is_connection_packet(std::uint8_t* message, std::size_t len) {
-				return len >= sizeof(expected_connected)
-				       && 0 == ::memcmp(message, &expected_connected, sizeof(expected_connected));
-			}
-
-			std::size_t parse_packet(std::uint8_t* buf, std::size_t len) {
-				if (len < sizeof(packet::packet_header)) {
-					LOG(ERROR) << "corrupted packet; received len=" << len;
-					return 0;
-				}
-				packet::packet_header* header = reinterpret_cast<packet::packet_header*>(buf);
-				if (len < header->size) {
-					LOG(ERROR) << "corrupted packet; received len=" << len << ", packet len=" << header->size;
-					return 0;
-				}
-				return header->size;
-			}
-		}
-
 		connection_manager::connection_manager(network::socket&& sock, listener_type& listener)
 				: _sock(std::move(sock)), _listener(listener) {
 		}

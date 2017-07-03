@@ -5,9 +5,6 @@
 
 namespace ipp {
 	namespace channel {
-		namespace {
-			std::size_t c;
-		}
 		sound_channel::sound_channel(ipphone& ipp, uint32_t ch_id, channel_type type)
 				: channel_wrapper(ch_id), _ipp(ipp), _ch_type(type) {
 			// prepare device

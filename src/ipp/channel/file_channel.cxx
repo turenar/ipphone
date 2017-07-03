@@ -6,10 +6,6 @@
 
 namespace ipp {
 	namespace channel {
-		namespace {
-			std::size_t c;
-		}
-
 		file_channel::file_channel(ipphone& ipp, uint32_t ch_id, channel_type type, std::string file_name)
 				: channel_wrapper(ch_id), _ipp(ipp), _ch_type(type) {
 			// prepare device
