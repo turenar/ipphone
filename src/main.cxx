@@ -10,10 +10,11 @@
 
 int main() {
 	signal(SIGPIPE, SIG_IGN);
+	setlocale(LC_ALL, "");
+
+	ippbin::logger l;
+	l.install_logger();
 	try {
-		setlocale(LC_ALL, "");
-		ippbin::logger l;
-		l.install_logger();
 		ippbin::terminal t;
 		t.run();
 	} catch (boost::exception& ex) {

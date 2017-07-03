@@ -2,6 +2,7 @@ subdir('sox')
 subdir('ipp')
 
 main_src = [
+	'ippbin/command/phone.cxx',
 	'ippbin/command/timeout.cxx',
 	'ippbin/terminal.cxx',
 	'ippbin/logger.cxx',

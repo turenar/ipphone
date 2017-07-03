@@ -1,7 +1,8 @@
 #include "ippbin/terminal.hxx"
 #include <iostream>
+#include "ippbin/command/command_exception.hxx"
 #include "ipp/logger/logger.hxx"
-#include "ippbin/command/timeout.hxx"
+#include "ippbin/command/command.hxx"
 
 namespace ippbin {
 	namespace {
@@ -10,6 +11,9 @@ namespace ippbin {
 			t.register_command("10yen", command::timeout_insert);
 			t.register_command("100yen", command::timeout_insert);
 			t.register_command("5000000000000000yen", command::timeout_insert);
+			t.register_command("listen", command::phone_listen);
+			t.register_command("connect", command::phone_connect);
+			t.register_command("debug", command::phone_debug);
 		}
 	}
 
@@ -17,6 +21,10 @@ namespace ippbin {
 
 	terminal::terminal() {
 		register_commands(*this);
+	}
+
+	terminal::~terminal() {
+		endwin();
 	}
 
 	void terminal::run() {
@@ -31,9 +39,9 @@ namespace ippbin {
 		keypad(_win, true);
 		while (loop()) {
 			// blur blur..
+			_ipp.update_frame();
 			std::this_thread::sleep_for(std::chrono::milliseconds(16));
 		}
-		endwin();
 		std::cout << "Bye." << std::endl;
 	}
 
@@ -73,7 +81,11 @@ namespace ippbin {
 		}
 		auto it = _commands.find(args[0]);
 		if (it != _commands.end()) {
-			it->second(*this, std::move(args));
+			try {
+				it->second(*this, std::move(args));
+			} catch (command::command_exception& ex) {
+				println(ex.what(), color_pair_error);
+			}
 		} else {
 			println(std::string("unknown command: ") + cmd, color_pair_error);
 		}
@@ -154,6 +166,8 @@ namespace ippbin {
 	void terminal::register_command(std::string name, command_callback_type callback) {
 		_commands.emplace(std::move(name), std::move(callback));
 	}
+
+	ipp::ipphone& terminal::ipp() { return _ipp; }
 }
 
 

@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "ipp/ipphone.hxx"
 
 namespace ippbin {
 	class terminal {
@@ -20,6 +21,11 @@ namespace ippbin {
 		static constexpr int timeout_warn_sec = 5;
 
 		terminal();
+		terminal(const terminal&) = delete;
+		terminal(terminal&&) = delete;
+		terminal& operator=(const terminal&)= delete;
+		terminal& operator=(terminal&&) = delete;
+		~terminal();
 
 		void run();
 		bool loop();
@@ -35,6 +41,8 @@ namespace ippbin {
 
 		void println(const std::string&, int color_pair = color_pair_output);
 
+		ipp::ipphone& ipp();
+
 	private:
 		using time_point_type = std::chrono::time_point<
 				std::chrono::steady_clock,
@@ -48,6 +56,6 @@ namespace ippbin {
 		std::unordered_map<std::string, command_callback_type> _commands;
 		std::string _buf;
 
-		ipp::ipphone& ipp;
+		ipp::ipphone _ipp;
 	};
 }

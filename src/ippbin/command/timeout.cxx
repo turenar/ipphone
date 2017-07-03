@@ -1,4 +1,4 @@
-#include "ippbin/command/timeout.hxx"
+#include "ippbin/command/command.hxx"
 
 namespace ippbin {
 	namespace command {
