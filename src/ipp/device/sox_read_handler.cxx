@@ -35,7 +35,7 @@ namespace ipp {
 			};
 		}
 
-		sox_read_handler::sox_read_handler() {
+		sox_read_handler::sox_read_handler() : _shutting_down(false) {
 			LOG(DEBUG) << "sox_read_handler registered";
 			sox::signalinfo sig;
 			sig.channels = channels;
