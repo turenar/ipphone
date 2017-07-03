@@ -36,6 +36,7 @@ namespace ipp {
 		}
 
 		sox_read_handler::sox_read_handler() {
+			LOG(DEBUG) << "sox_read_handler registered";
 			sox::signalinfo sig;
 			sig.channels = channels;
 			sig.length = 0;
@@ -45,8 +46,17 @@ namespace ipp {
 					read_worker(*this, sox::format::open_device_for_read("default", &sig, nullptr, "pulseaudio")));
 		}
 
+		sox_read_handler::~sox_read_handler() {
+			shutdown();
+			_worker.join();
+		}
+
+		void sox_read_handler::shutdown() {
+			_shutting_down = true;
+		}
+
 		bool sox_read_handler::shutting_down() const {
-			return false; // FIXME
+			return _shutting_down; // FIXME
 		}
 	}
 }

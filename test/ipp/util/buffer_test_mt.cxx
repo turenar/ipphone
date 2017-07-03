@@ -32,7 +32,7 @@ namespace ipp {
 						}
 						LOG(DEBUG) << "wake up writer";
 						int wc = 0;
-						const ElementType dat[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+						const ElementType dat[] = {0, 1, 2, 3};
 						for (int i = 0; i < loop_count; i++) {
 							wc += buf.write(dat, std::extent<decltype(dat)>::value);
 						}
@@ -51,7 +51,7 @@ namespace ipp {
 						LOG(DEBUG) << "wake up reader";
 						int rc = 0;
 
-						ElementType dat[10];
+						ElementType dat[4];
 						for (int i = 0; i < loop_count; i++) {
 							rc += buf.read(dat, std::extent<decltype(dat)>::value);
 						}

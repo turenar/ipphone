@@ -12,12 +12,12 @@ namespace ipp {
 		shared_fd();
 		explicit shared_fd(int);
 		shared_fd(const shared_fd&);
-		shared_fd(shared_fd&&);
-		shared_fd(unique_fd&&);
+		shared_fd(shared_fd&&) noexcept;
+		shared_fd(unique_fd&&) noexcept;
 
 		shared_fd& operator=(const shared_fd&);
-		shared_fd& operator=(shared_fd&&);
-		shared_fd& operator=(unique_fd&&);
+		shared_fd& operator=(shared_fd&&) noexcept;
+		shared_fd& operator=(unique_fd&&) noexcept;
 
 		~shared_fd() = default;
 
@@ -36,9 +36,9 @@ namespace ipp {
 
 	inline shared_fd::shared_fd(const shared_fd& fd) { *this = fd; }
 
-	inline shared_fd::shared_fd(shared_fd&& fd) { *this = std::move(fd); }
+	inline shared_fd::shared_fd(shared_fd&& fd) noexcept { *this = std::move(fd); }
 
-	inline shared_fd::shared_fd(unique_fd&& fd) { *this = std::move(fd); }
+	inline shared_fd::shared_fd(unique_fd&& fd)  noexcept { *this = std::move(fd); }
 
 
 	inline shared_fd& shared_fd::operator=(const shared_fd& another) {
@@ -47,14 +47,14 @@ namespace ipp {
 		return *this;
 	}
 
-	inline shared_fd& shared_fd::operator=(shared_fd&& other) {
+	inline shared_fd& shared_fd::operator=(shared_fd&& other) noexcept {
 		_ptr = std::move(other._ptr);
 		_fd = other._fd;
 		other._fd = invalid_fd;
 		return *this;
 	}
 
-	inline shared_fd& shared_fd::operator=(unique_fd&& other) {
+	inline shared_fd& shared_fd::operator=(unique_fd&& other) noexcept {
 		_fd = other.get();
 		if (other) {
 			_ptr = std::make_shared<unique_fd>(std::move(other));

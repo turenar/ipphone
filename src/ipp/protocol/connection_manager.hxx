@@ -11,7 +11,7 @@ namespace ipp {
 		class connection_manager {
 		public:
 			using listener_type = protocol_listener;
-			using connection_map_type = std::unordered_map<network::socket_address, connection>;
+			using connection_map_type = std::unordered_map<network::socket_address, std::unique_ptr<connection>>;
 			connection_manager(network::socket&&, listener_type& listener);
 			connection_manager(const connection_manager&) = delete;
 			connection_manager(connection_manager&&) = default;
@@ -19,7 +19,7 @@ namespace ipp {
 			connection_manager& operator=(const connection_manager&) = delete;
 			connection_manager& operator=(connection_manager&&) = default;
 
-			connection& connect(const network::socket_address&);
+			const std::unique_ptr<connection>& connect(const network::socket_address&);
 			void consume_socket();
 
 			connection_map_type& get_connections();

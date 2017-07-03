@@ -51,13 +51,17 @@ namespace ipp {
 		if (ch) {
 			_channels.emplace(ch_id, std::move(ch));
 			for (auto& connection : _manager.get_connections()) {
-				connection.second.protocol().channel_open(ch_id, ty, fl);
+				connection.second->protocol().channel_open(ch_id, ty, fl);
 			}
 			return true;
 		} else {
 			LOG(ERROR) << "channel_type is not found" << static_cast<int>(ty);
 			return false;
 		}
+	}
+
+	ipphone::channel_map_type& ipphone::channels() {
+		return _channels;
 	}
 
 	void ipphone::on_keep_alive(protocol::connection&, const protocol::message::keep_alive*, std::size_t) {}

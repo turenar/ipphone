@@ -36,39 +36,27 @@ namespace ipp {
 				: _sock(std::move(sock)), _listener(listener) {
 		}
 
-		connection& connection_manager::connect(const network::socket_address& addr) {
+		const std::unique_ptr<connection>& connection_manager::connect(const network::socket_address& addr) {
 			auto iterator = _connection_map.find(addr);
 			if (iterator == _connection_map.end()) {
-				connection new_connection{network::socket_connection(_sock, addr), _listener};
+				auto new_connection = std::make_unique<connection>(_sock.connect(addr), _listener);
 				_connection_map.emplace(addr, std::move(new_connection));
 				iterator = _connection_map.find(addr);
-				iterator->second.protocol().connect();
+				iterator->second->protocol().connect();
 			}
 			return iterator->second;
 		}
 
 		void connection_manager::consume_socket() {
-			std::uint8_t buf[65536];
-			network::socket_address addr;
-			while (_sock.recvable(std::chrono::milliseconds(0))) {
-				std::size_t len = _sock.recv(buf, sizeof(buf), addr);
-				std::size_t message_len = parse_packet(buf, len);
-				if (message_len <= 0) {
-					continue; // broken packet
-				}
+			if (_sock.listening() && _sock.accpetable(std::chrono::milliseconds::zero())) {
+				network::socket_connection sock_con = _sock.accept();
+				network::socket_address address = sock_con.address();
+				_connection_map.emplace(std::move(address),
+				                        std::make_unique<connection>(std::move(sock_con), _listener));
+			}
 
-				std::uint8_t* message = buf + sizeof(packet::packet_header);
-				auto iterator = _connection_map.find(addr);
-				if (iterator == _connection_map.end()) {
-					if (!is_connection_packet(message, message_len)) {
-						continue;
-					}
-					LOG(DEBUG) << "incoming connection!";
-					const connection& new_connection = connection(network::socket_connection(_sock, addr), _listener);
-					iterator = _connection_map.emplace(addr, new_connection).first;
-					iterator->second.protocol().connect();
-				}
-				iterator->second.parse_message(message, message_len);
+			for (auto& con : _connection_map) {
+				con.second->consume();
 			}
 		}
 

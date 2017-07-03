@@ -20,12 +20,16 @@ namespace ipp {
 			}
 
 			void packet_builder::send(network::socket_connection& con) {
-				static_assert(sizeof(packet_header) == 4, "packet header size is wrong");
+				static_assert(sizeof(packet_header) == 8, "update send");
 				std::uint16_t size = static_cast<uint16_t> (_write_ptr - packet_header_size);
 				_buf[0] = size & 0xff;
 				_buf[1] = size >> 8;
 				_buf[2] = static_cast<std::uint8_t>(packet_flag::NONE);
 				_buf[3] = _seq;
+				_buf[4] = _checksum & 0xff;
+				_buf[5] = _checksum >> 8;
+				_buf[6] = 0; // reserved
+				_buf[7] = 0; // reserved
 				++_seq;
 				con.send(_buf, _write_ptr);
 				clear();

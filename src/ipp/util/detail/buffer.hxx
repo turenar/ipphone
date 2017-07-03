@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "ipp/logger/logger.hxx"
+#include <cassert>
 
 namespace ipp {
 	namespace util {
@@ -59,6 +60,8 @@ namespace ipp {
 			if (_is_full || len == 0) {
 				return 0; // fast return
 			}
+			assert(!(_is_full && read_ptr != write_ptr));
+
 			const element_type* pointer = elements;
 			std::size_t write_len = 0;
 			std::size_t remain_len = len;
@@ -103,6 +106,8 @@ namespace ipp {
 			if (len == 0 || (!_is_full && read_ptr == write_ptr)) {
 				return 0; // fast return
 			}
+			assert(!(_is_full && read_ptr != write_ptr));
+
 			element_type* pointer = elements;
 			std::size_t read_len = 0;
 			std::size_t remain_len = len;

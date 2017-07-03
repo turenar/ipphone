@@ -11,6 +11,8 @@ namespace ipp {
 				std::uint16_t size;
 				packet_flag flag;
 				std::uint8_t sequence;
+				std::uint16_t checksum;
+				std::uint16_t reserved;
 			};
 
 			constexpr std::uint16_t packet_max_size = 60000u;

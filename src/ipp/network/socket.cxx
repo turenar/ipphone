@@ -5,52 +5,41 @@
 
 namespace ipp {
 	namespace network {
-		namespace {
-			void debug_recv_send(const char* ev, const std::uint8_t* data, std::size_t buflen, int fd) {
-				(void) ev;
-				(void) data;
-				(void) buflen;
-#ifndef NDEBUG
-				std::ostringstream buf;
-				buf << ev << ": fd=" << fd << std::hex;
-				const std::uint8_t* p = data;
-				for (std::size_t i = 0; i < buflen; i += 16) {
-					std::size_t colend = std::min(i + 16, buflen);
-					buf << '\n' << std::setw(4) << i << ':';
-					for (std::size_t col = i; col < colend; ++col) {
-						if (col % 4 == 0) {
-							buf << '|';
-						} else {
-							buf << ' ';
-						}
-						buf << std::setw(2) << std::setfill('0') << static_cast<int>(*p++);
-					}
-					break;
-				}
-				LOG(DEBUG) << buf.str();
-#endif
-			}
-		}
-
 		socket::socket() {
-			_fd = shared_fd(::socket(AF_INET, SOCK_DGRAM, 0));
+			_fd = shared_fd(::socket(AF_INET, SOCK_STREAM, 0));
 			if (!_fd) {
 				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
 			}
 		}
 
 		socket_connection socket::connect(const socket_address& addr) {
-			return socket_connection(*this, addr);
-		}
-
-		void socket::bind(const socket_address& addr) {
-			int result = ::bind(_fd, addr.get_native_address(), addr.get_native_size());
+			int result = ::connect(_fd, addr.get_native_address(), addr.get_native_size());
 			if (result < 0) {
 				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
 			}
+			return socket_connection(_fd, addr);
 		}
 
-		bool socket::recvable(const std::chrono::milliseconds& timeout) {
+		void socket::bind(const socket_address& addr) {
+			int on = 1;
+			int result = setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+			if (result < 0) {
+				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
+			}
+
+			result = ::bind(_fd, addr.get_native_address(), addr.get_native_size());
+			if (result < 0) {
+				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
+			}
+
+			result = ::listen(_fd, 1024);
+			if (result < 0) {
+				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
+			}
+			_listening = true;
+		}
+
+		bool socket::accpetable(const std::chrono::milliseconds& timeout) {
 			fd_set rfds;
 			FD_ZERO(&rfds);
 			FD_SET(_fd, &rfds);
@@ -66,25 +55,14 @@ namespace ipp {
 			return result > 0;
 		}
 
-		std::size_t socket::send(const std::uint8_t* data, std::size_t len, const socket_address& addr) {
-			debug_recv_send("send", data, len, _fd);
-			ssize_t result = ::sendto(_fd, data, len, 0, addr.get_native_address(), addr.get_native_size());
-			if (result < 0) {
+		socket_connection socket::accept() {
+			socket_address addr;
+			socklen_t addr_len = addr.get_native_size();
+			int con_fd = ::accept(_fd, addr.get_native_address(), &addr_len);
+			if (con_fd < 0) {
 				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
 			}
-			return static_cast<std::size_t>(result);
-		}
-
-		std::size_t socket::recv(std::uint8_t* buf, std::size_t buflen, socket_address& addr) {
-			socket_address tmp_addr;
-			auto tmp_addr_len = tmp_addr.get_native_size();
-			ssize_t result = ::recvfrom(_fd, buf, buflen, 0, tmp_addr.get_native_address(), &tmp_addr_len);
-			if (result < 0) {
-				IPP_THROW_EXCEPTION(socket_exception(errno, std::system_category()));
-			}
-			debug_recv_send("recv", buf, static_cast<std::size_t>(result), _fd);
-			addr = std::move(tmp_addr);
-			return static_cast<std::size_t>(result);
+			return socket_connection(shared_fd(con_fd), std::move(addr));
 		}
 
 		socket_address socket::get_listening_address() {
@@ -92,6 +70,10 @@ namespace ipp {
 			socklen_t addr_len = addr.get_native_size();
 			::getsockname(_fd, addr.get_native_address(), &addr_len);
 			return addr;
+		}
+
+		bool socket::listening() {
+			return _listening;
 		}
 	}
 }

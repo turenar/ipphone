@@ -2,8 +2,14 @@
 
 #include "ipp/network/socket_connection.hxx"
 #include "ipp/protocol/ippp.hxx"
+#include "ipp/util/buffer.hxx"
 
 namespace ipp {
+	namespace util {
+		template <typename T>
+		class buffer;
+	}
+
 	namespace protocol {
 		class protocol_listener;
 
@@ -11,15 +17,17 @@ namespace ipp {
 		public:
 			using listener_type = protocol_listener;
 
-			connection(network::socket_connection&&, listener_type&);
+			connection(network::socket_connection, listener_type&);
 
 			bool parse_message(const std::uint8_t* msg, std::size_t len);
 			ippp& protocol();
 
 			listener_type& get_listener();
+			void consume();
 
 		private:
 			ippp _protocol;
+			network::socket_connection _con;
 			listener_type& _listener;
 		};
 	}

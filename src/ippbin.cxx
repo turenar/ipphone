@@ -29,17 +29,19 @@ namespace {
 
 int main(int argc, char** argv) {
 	auto worker = prepare_logger();
+	signal(SIGPIPE, SIG_IGN);
+
 	ipp::util::buffer<std::uint16_t> buf(4);
 	try {
 		if (argc >= 2) {
-			ipp::ipphone ip(false);
+			ipp::ipphone ip(true);
 			ip.connect("127.0.0.1", 12345);
 			ip.open_channel(ipp::protocol::channel::channel_type::sound, ipp::protocol::channel::channel_flag::none);
 			while (true) {
 				ip.update_frame();
 			}
 		} else {
-			ipp::ipphone ip(true);
+			ipp::ipphone ip(false);
 			ip.bind("127.0.0.1", 12345);
 			while (true) {
 				ip.update_frame();

@@ -50,6 +50,19 @@ namespace ipp {
 					TEST_WRAP(test_read(3, buf, w, r, 0, 3));
 					TEST_WRAP(test_write(3, buf, w, 4, 4));
 					TEST_WRAP(test_read(4, buf, w, r, 3, 4));
+
+					TEST_WRAP(test_write(4, buf, w, 0, 4));
+					TEST_WRAP(test_read(4, buf, w, r, 0, 4));
+					TEST_WRAP(test_write(4, buf, w, 0, 4));
+					TEST_WRAP(test_read(4, buf, w, r, 0, 4));
+					TEST_WRAP(test_write(4, buf, w, 0, 4));
+					TEST_WRAP(test_read(4, buf, w, r, 0, 4));
+					TEST_WRAP(test_write(4, buf, w, 0, 4));
+					TEST_WRAP(test_read(4, buf, w, r, 0, 4));
+					TEST_WRAP(test_write(4, buf, w, 0, 4));
+					TEST_WRAP(test_read(4, buf, w, r, 0, 4));
+					TEST_WRAP(test_write(4, buf, w, 0, 4));
+					TEST_WRAP(test_read(4, buf, w, r, 0, 4));
 				}
 			}
 		}

@@ -10,6 +10,9 @@ namespace ipp {
 		}
 		sound_channel::sound_channel(ipphone& ipp, uint32_t ch_id, channel_type type)
 				: channel_wrapper(ch_id), _ipp(ipp), _ch_type(type) {
+			// prepare device
+			ipp.reader_device();
+			ipp.writer_device();
 		}
 
 		void sound_channel::receive(const std::uint8_t* buf, const std::uint16_t len) {
@@ -46,7 +49,7 @@ namespace ipp {
 			buf[3] = len >> 9;
 			LOG(DEBUG) << "send samples: " << (c += len / 2);
 			for (auto& pair : _ipp.connection_manager().get_connections()) {
-				pair.second.protocol().channel_data(_channel_id, reinterpret_cast<std::uint8_t*>(buf),
+				pair.second->protocol().channel_data(_channel_id, reinterpret_cast<std::uint8_t*>(buf),
 				                                    sizeof(sound_header) + len * sizeof(std::uint16_t));
 			}
 		}

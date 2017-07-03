@@ -61,7 +61,9 @@ namespace ipp {
 							std::unique_lock<std::mutex> lock(m);
 							cv.wait(lock, [&write_finished]() -> bool { return write_finished; });
 						}
-						rc += buf.read(dat, std::extent<decltype(dat)>::value, std::chrono::milliseconds(1000));
+						if (!buf.empty()) {
+							rc += buf.read(dat, std::extent<decltype(dat)>::value, std::chrono::milliseconds(1000));
+						}
 						read_count = rc;
 					});
 					{

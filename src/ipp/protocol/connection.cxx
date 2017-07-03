@@ -1,27 +1,42 @@
 #include "ipp/protocol/connection.hxx"
+#include <cstring>
 #include "ipp/logger/logger.hxx"
 #include "ipp/protocol/protocol_listener.hxx"
 #include "ipp/protocol/message/message_connection.hxx"
+#include "ipp/ipp_exception.hxx"
+#include <typeinfo>
 
 namespace ipp {
 	namespace protocol {
 		namespace {
+			std::size_t parse_packet(std::uint8_t* buf, std::size_t len) {
+				if (len < sizeof(packet::packet_header)) {
+					LOG(ERROR) << "corrupted packet; received len=" << len;
+					return 0;
+				}
+				packet::packet_header* header = reinterpret_cast<packet::packet_header*>(buf);
+				if (len < header->size) {
+					LOG(ERROR) << "corrupted packet; received len=" << len << ", packet len=" << header->size;
+					return 0;
+				}
+				return header->size;
+			}
+
 			template <typename MessageType, typename Dispatcher>
 			inline bool dispatch(connection& con, const std::uint8_t* msg, std::size_t len, Dispatcher dispatcher) {
-				std::size_t required_len = +
-				                           std::is_empty<MessageType>::value ?0:sizeof(MessageType);
-				;
+				std::size_t required_len = std::is_empty<MessageType>::value ? 0 : sizeof(MessageType);
 				if (len < required_len) {
 					LOG(WARNING) << "broken message: required_size=" << required_len << ", actual_size=" << len;
 					return false;
 				}
+				LOG(INFO) << "dispatching " << typeid(Dispatcher).name();
 				((&con.get_listener())->*dispatcher)(con, reinterpret_cast<const MessageType*>(msg + 1), len - 1);
 				return true;
 			}
 		}
 
-		connection::connection(network::socket_connection&& con, protocol_listener& listener)
-				: _protocol(con), _listener(listener) {
+		connection::connection(network::socket_connection con, protocol_listener& listener)
+				: _protocol(con), _con(con), _listener(listener) {
 		}
 
 		protocol_listener& connection::get_listener() {
@@ -48,6 +63,29 @@ namespace ipp {
 				default:
 					LOG(WARNING) << "unknown message type: " << static_cast<std::uint8_t>(type);
 					return false;
+			}
+		}
+
+		void connection::consume() {
+			std::uint8_t buf[65536];
+			while (_con.recvable(std::chrono::milliseconds(0))) {
+				std::size_t len = _con.recv(buf, sizeof(buf));
+				if (len == 0) {
+					IPP_THROW_EXCEPTION(ipp_exception("Connection closed"));
+				}
+				std::uint8_t* ptr = buf;
+				std::size_t remain_len = len;
+				while (remain_len > 0) {
+					std::size_t message_len = parse_packet(ptr, remain_len);
+					if (message_len <= 0) {
+						return; // broken packet
+					}
+
+					ptr += sizeof(packet::packet_header);
+					parse_message(ptr, message_len);
+					ptr += message_len;
+					remain_len -= sizeof(packet::packet_header) + message_len;
+				}
 			}
 		}
 

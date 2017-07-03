@@ -16,14 +16,14 @@ namespace ipp {
 			socket_connection connect(const socket_address& addr);
 			void bind(const socket_address&);
 
-			bool recvable(const std::chrono::milliseconds& timeout);
-
-			std::size_t send(const std::uint8_t* data, std::size_t len, const socket_address& addr);
-			std::size_t recv(std::uint8_t* buf, std::size_t buflen, socket_address& addr);
+			bool accpetable(const std::chrono::milliseconds& timeout);
+			socket_connection accept();
 
 			socket_address get_listening_address();
+			bool listening();
 		protected:
 			shared_fd _fd;
+			bool _listening = false;
 		};
 	}
 }

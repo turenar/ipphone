@@ -9,8 +9,9 @@ namespace ipp {
 		public:
 			sox_write_handler();
 
-			virtual ~sox_write_handler() {}
+			virtual ~sox_write_handler();
 
+			void shutdown();
 			bool shutting_down() const;
 		private:
 			std::thread _worker;
