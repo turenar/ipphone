@@ -30,7 +30,7 @@ namespace ipp {
 
 		void sound_channel::flush_packets() {
 			using protocol::channel::sound_header;
-			std::uint8_t buf[sizeof(sound_header) + 512 * sizeof(std::uint16_t)];
+			std::uint8_t buf[sizeof(sound_header) + 512 * 2 * sizeof(std::uint16_t)];
 			static_assert(sizeof(sound_header) == 4, "aho");
 			buf[0] = static_cast<std::uint8_t>(protocol::channel::sound_encode_type::raw16);
 			buf[1] = 0;
