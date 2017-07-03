@@ -4,11 +4,18 @@
 
 namespace ipp {
 	namespace logger {
+		log_console_sink::log_console_sink(const char* filename) {
+			if (filename) {
+				_fp = fopen(filename, "w");
+			} else {
+				_fp = stderr;
+			}
+		}
+
 		void log_console_sink::log(g3::LogMessageMover mesinst) {
 			std::lock_guard<std::mutex> lock(_lock);
 			auto& mes = mesinst.get();
 
-#ifdef __GNUC__
 			const char* levelColor;
 			if (mes.wasFatal()) {
 				levelColor = "1;30;41"; // bold black on red
@@ -21,14 +28,9 @@ namespace ipp {
 			} else {
 				levelColor = "36"; // cyan
 			}
-			std::cerr << "\033[" << levelColor << 'm' << mes.level() << '(' << mes.file() << ':' << mes.line()
-			          << ")\033[0m: " << mes.message() << std::endl;
-#else
-			std::ostringstream buf;
-			buf << mes.level() << '(' << mes.file() << ':' << mes.line() << "): " << mes.message() << '\n';
-			std::string tmp(util::wtoa(utf8to16(buf.str())));
-			OutputDebugStringA(tmp.c_str());
-#endif
+			fprintf(_fp, "\033[%sm%s(%s:%s)\033[0m: %s\n", levelColor, mes.level().c_str(), mes.file().c_str(),
+			        mes.line().c_str(), mes.message().c_str());
+			fflush(_fp);
 		}
 	} /* logger */
 }

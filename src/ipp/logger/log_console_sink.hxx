@@ -1,18 +1,19 @@
 #pragma once
 
-#include <fstream>
+#include <cstdio>
 #include <mutex>
-#include <string>
 #include <g3log/g3log.hpp>
 
 namespace ipp {
 	namespace logger {
 		class log_console_sink {
+		public:
+			log_console_sink(const char* = nullptr);
+			void log(g3::LogMessageMover mes);
+
 		private:
 			std::mutex _lock;
-
-		public:
-			void log(g3::LogMessageMover mes);
+			FILE* _fp;
 		};
 	} /* logger */
 }
