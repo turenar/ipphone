@@ -1,10 +1,10 @@
 #include "ipp/ipphone.hxx"
 #include <chrono>
 #include <fstream>
+#include "ipp/channel/file_channel.hxx"
 #include "ipp/channel/sound_channel.hxx"
 #include "ipp/device/sox_read_handler.hxx"
 #include "ipp/device/sox_write_handler.hxx"
-#include "ipp/channel/file_channel.hxx"
 
 namespace ipp {
 	namespace {

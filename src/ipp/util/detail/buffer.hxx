@@ -6,8 +6,8 @@
 #include <cstring>
 #include <memory>
 
-#include "ipp/logger/logger.hxx"
 #include <cassert>
+#include "ipp/logger/logger.hxx"
 
 namespace ipp {
 	namespace util {

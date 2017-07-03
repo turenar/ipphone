@@ -1,11 +1,11 @@
 #include "ipp/protocol/connection.hxx"
 #include <cstring>
+#include <limits>
+#include <typeinfo>
+#include "ipp/ipp_exception.hxx"
 #include "ipp/logger/logger.hxx"
 #include "ipp/protocol/protocol_listener.hxx"
 #include "ipp/protocol/message/message_connection.hxx"
-#include "ipp/ipp_exception.hxx"
-#include <typeinfo>
-#include <limits>
 
 namespace ipp {
 	namespace protocol {

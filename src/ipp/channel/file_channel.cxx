@@ -1,8 +1,8 @@
 #include "ipp/channel/file_channel.hxx"
 #include "ipp/ipphone.hxx"
 #include "ipp/logger/logger.hxx"
-#include "ipp/protocol/channel/sound_header.hxx"
 #include "ipp/network/socket_exception.hxx"
+#include "ipp/protocol/channel/sound_header.hxx"
 
 namespace ipp {
 	namespace channel {

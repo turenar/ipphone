@@ -1,7 +1,7 @@
-#include <string>
 #include <iostream>
-#include <vector>
+#include <string>
 #include <time.h>
+#include <vector>
 int main() {
   int coin = 10;  //持ち時間
   time_t start = time(NULL);
