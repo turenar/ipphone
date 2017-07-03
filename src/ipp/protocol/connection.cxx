@@ -5,6 +5,7 @@
 #include "ipp/protocol/message/message_connection.hxx"
 #include "ipp/ipp_exception.hxx"
 #include <typeinfo>
+#include <limits>
 
 namespace ipp {
 	namespace protocol {
@@ -83,6 +84,9 @@ namespace ipp {
 					ptr += sizeof(packet::packet_header);
 					parse_message(ptr, message_len);
 					ptr += message_len;
+					if (_remain_len > std::numeric_limits<std::int64_t>::max()) {
+						LOG(ERROR) << _remain_len << ':'len;
+					}
 					_remain_len -= sizeof(packet::packet_header) + message_len;
 				}
 				std::memmove(_buf, ptr, _remain_len);
