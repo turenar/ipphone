@@ -67,17 +67,16 @@ namespace ipp {
 		}
 
 		void connection::consume() {
-			std::uint8_t buf[65536 * 2];
-			std::size_t remain_len = 0;
 			while (_con.recvable(std::chrono::milliseconds(0))) {
-				std::size_t len = _con.recv(buf, sizeof(buf) - remain_len);
-				remain_len += len;
+				LOG(DEBUG) << _remain_len;
+				std::size_t len = _con.recv(_buf, sizeof(_buf) - _remain_len);
+				_remain_len += len;
 				if (len == 0) {
 					IPP_THROW_EXCEPTION(ipp_exception("Connection closed"));
 				}
-				std::uint8_t* ptr = buf;
-				while (remain_len > 0) {
-					std::size_t message_len = parse_packet(ptr, remain_len);
+				std::uint8_t* ptr = _buf;
+				while (_remain_len > 0) {
+					std::size_t message_len = parse_packet(ptr, _remain_len);
 					if (message_len <= 0) {
 						break; // broken packet
 					}
@@ -85,9 +84,9 @@ namespace ipp {
 					ptr += sizeof(packet::packet_header);
 					parse_message(ptr, message_len);
 					ptr += message_len;
-					remain_len -= sizeof(packet::packet_header) + message_len;
+					_remain_len -= sizeof(packet::packet_header) + message_len;
 				}
-				std::memmove(buf, ptr, remain_len);
+				std::memmove(_buf, ptr, _remain_len);
 			}
 		}
 
