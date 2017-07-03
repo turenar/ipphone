@@ -1,11 +1,22 @@
 #include "ippbin/terminal.hxx"
 #include <iostream>
 #include "ipp/logger/logger.hxx"
+#include "ippbin/command/timeout.hxx"
 
 namespace ippbin {
-	constexpr int terminal::timeout_warn;
+	namespace {
+		void register_commands(terminal& t) {
+			t.register_command("enable_timeout", command::timeout_enable);
+			t.register_command("10yen", command::timeout_insert);
+			t.register_command("100yen", command::timeout_insert);
+			t.register_command("5000000000000000yen", command::timeout_insert);
+		}
+	}
+
+	constexpr int terminal::timeout_warn_sec;
 
 	terminal::terminal() {
+		register_commands(*this);
 	}
 
 	void terminal::run() {
@@ -37,26 +48,64 @@ namespace ippbin {
 
 	void terminal::parse_command(const std::string& cmd) {
 		println(cmd, color_pair_default);
-		if (cmd == "timeout") {
-			_timeout_enabled = true;
-			_timeout_warned = false;
-			_timeout = std::chrono::seconds(10);
-			_start = std::chrono::steady_clock::now();
-			println("timeout enabled");
+
+		std::size_t argc = static_cast<std::size_t>( std::count(cmd.cbegin(), cmd.cend(), ' '));
+		std::vector<std::string> args;
+		args.reserve(argc);
+
+		std::size_t arg_first_char = 0;
+		while (true) {
+			std::size_t space_index = cmd.find(' ', arg_first_char);
+			if (space_index == std::string::npos) {
+				args.emplace_back(cmd, arg_first_char);
+				break;
+			} else if (space_index == arg_first_char + 1) {
+				// space sequenced
+				continue;
+			} else {
+				args.emplace_back(cmd, arg_first_char, space_index - arg_first_char);
+				arg_first_char = space_index + 1; // space
+			}
+		}
+		if (args.empty()) {
+			// no command
+			return;
+		}
+		auto it = _commands.find(args[0]);
+		if (it != _commands.end()) {
+			it->second(*this, std::move(args));
 		} else {
 			println(std::string("unknown command: ") + cmd, color_pair_error);
 		}
 	}
 
+	void terminal::enable_timeout() {
+		_timeout_enabled = true;
+		_timeout_warned = false;
+		_start = std::chrono::steady_clock::now();
+		_timeout_sec = 10;
+		println("timeout enabled");
+	}
+
 	bool terminal::check_timeout() {
 		auto now = std::chrono::steady_clock::now();
-		if (_timeout_enabled && !_timeout_warned && (now - _start) >= std::chrono::seconds(timeout_warn)) {
+		auto seconds = std::chrono::duration_cast<std::chrono::seconds>(now - _start);
+		if (_timeout_enabled && !_timeout_warned && seconds >= std::chrono::seconds(_timeout_sec - timeout_warn_sec)) {
 			println("まもなく切断されます。お金を入れてください。", color_pair_warning);
 			_timeout_warned = true;
 		}
-		return _timeout_enabled && (now - _start) > _timeout;
+		return _timeout_enabled && seconds > std::chrono::seconds(_timeout_sec);
 	}
 
+	void terminal::add_timeout(std::size_t sec) {
+		_timeout_warned = false;
+		_timeout_sec += sec;
+
+		auto now = std::chrono::steady_clock::now();
+		auto remain_sec = _timeout_sec - std::chrono::duration_cast<std::chrono::seconds>(now - _start).count();
+		println(std::string("残り通話可能時間は ") + std::to_string(remain_sec) + " 秒です");
+	}
+	
 	std::string terminal::readline() {
 		int c;
 		int h = getmaxy(_win);
@@ -100,6 +149,10 @@ namespace ippbin {
 		attroff(COLOR_PAIR(color_pair));
 
 		wrefresh(_win);
+	}
+
+	void terminal::register_command(std::string name, command_callback_type callback) {
+		_commands.emplace(std::move(name), std::move(callback));
 	}
 }
 

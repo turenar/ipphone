@@ -4,15 +4,20 @@
 #include <ncurses.h>
 #include <string>
 #include <unordered_map>
+#include <functional>
+#include <vector>
 
 namespace ippbin {
 	class terminal {
 	public:
+		using command_vector = std::vector<std::string>;
+		using command_callback_type = std::function<void(terminal&, command_vector&&)>;
+
 		static constexpr int color_pair_default = 0;
 		static constexpr int color_pair_output = 1;
 		static constexpr int color_pair_error = 2;
 		static constexpr int color_pair_warning = 2;
-		static constexpr int timeout_warn = 5;
+		static constexpr int timeout_warn_sec = 5;
 
 		terminal();
 
@@ -20,17 +25,27 @@ namespace ippbin {
 		bool loop();
 
 		std::string readline();
+
+		void register_command(std::string name, command_callback_type callback);
 		void parse_command(const std::string&);
+
+		void enable_timeout();
 		bool check_timeout();
+		void add_timeout(std::size_t sec);
 
 		void println(const std::string&, int color_pair = color_pair_output);
 
 	private:
+		using time_point_type = std::chrono::time_point<
+				std::chrono::steady_clock,
+				std::chrono::duration<long, std::chrono::seconds::period>>;
+
 		WINDOW* _win;
 		bool _timeout_enabled = false;
 		bool _timeout_warned = false;
-		std::chrono::seconds _timeout;
 		std::chrono::steady_clock::time_point _start;
+		std::size_t _timeout_sec;
+		std::unordered_map<std::string, command_callback_type> _commands;
 		std::string _buf;
 	};
 }
