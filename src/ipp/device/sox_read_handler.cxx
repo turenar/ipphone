@@ -47,6 +47,7 @@ namespace ipp {
 		}
 
 		sox_read_handler::~sox_read_handler() {
+			LOG(INFO) << "sox_read_handler destroyed";
 			shutdown();
 			_worker.join();
 		}
