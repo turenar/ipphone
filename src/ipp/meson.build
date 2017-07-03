@@ -1,9 +1,3 @@
-boost_dep = dependency('boost', modules : ['exception'])
-g3logger_dep = dependency('g3logger',
-	fallback: ['g3log', 'g3logger_dep'],
-	default_options: ['dynamic_logging=true']
-)
-
 libipphone_files = [
 	'channel/file_channel.cxx',
 	'channel/sound_channel.cxx',
@@ -31,6 +25,7 @@ libipp = library('ipphone', [libipphone_files, vcs_rev],
 	cpp_args: project_warnings)
 
 libipp_dep = declare_dependency(
+	sources: vcs_rev,
 	link_with: libipp,
 	dependencies: [boost_dep, g3logger_dep, libsoxcpp_dep],
 	include_directories: include_directories(['..']))

@@ -40,5 +40,12 @@ if get_option('buildtype').contains('debug')
 	endif
 endif
 
+boost_dep = dependency('boost', modules : ['exception'])
+ncurses_dep = dependency('ncursesw')
+g3logger_dep = dependency('g3logger',
+    fallback: ['g3log', 'g3logger_dep'],
+    default_options: ['dynamic_logging=true']
+)
+
 subdir('src')
 subdir('test')

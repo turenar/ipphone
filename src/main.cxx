@@ -1,9 +1,19 @@
 #include <iostream>
+#include <locale.h>
 #include <string>
 #include <time.h>
 #include <vector>
+#include "ippbin/logger.hxx"
+#include "ippbin/terminal.hxx"
 
 int main() {
+	setlocale(LC_ALL, "");
+	ippbin::logger l;
+	l.install_logger();
+	ippbin::terminal t;
+	t.run();
+	return 0;
+
 	int coin = 10;  //持ち時間
 	time_t start = time(NULL);
 	while (1) {
