@@ -25,6 +25,7 @@ namespace ipp {
 		void open_channel(std::unique_ptr<channel::channel_wrapper>&&, protocol::channel::channel_flag fl);
 		std::unique_ptr<channel::channel_wrapper> close_channel(const channel::channel_wrapper*);
 		channel_map_type& channels();
+		void enable_reader(bool enabled);
 
 		virtual void on_keep_alive(protocol::connection&, const protocol::message::keep_alive*, std::size_t) override;
 		virtual void on_connect(protocol::connection&, const protocol::message::connect*, std::size_t) override;

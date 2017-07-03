@@ -137,4 +137,8 @@ namespace ipp {
 	protocol::connection_manager& ipphone::connection_manager() {
 		return _manager;
 	}
+
+	void ipphone::enable_reader(bool enabled) {
+		_reader_enabled = enabled;
+	}
 }
