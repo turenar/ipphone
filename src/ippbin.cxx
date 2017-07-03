@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 				ip.update_frame();
 			}
 		} else {
-			ipp::ipphone ip(false);
+			ipp::ipphone ip(true);
 			ip.bind("0.0.0.0", 12345);
 			while (true) {
 				ip.update_frame();

@@ -68,6 +68,7 @@ namespace ipp {
 
 		void connection::consume() {
 			while (_con.recvable(std::chrono::milliseconds(0))) {
+				LOG(DEBUG) << _remain_len;
 				std::size_t len = _con.recv(_buf, sizeof(_buf) - _remain_len);
 				_remain_len += len;
 				if (len == 0) {
