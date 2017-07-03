@@ -15,13 +15,15 @@ namespace ipp {
 	public:
 		using channel_map_type = std::unordered_map<std::uint32_t, std::unique_ptr<channel::channel_wrapper>>;
 
-		ipphone(bool reader_enabled=true);
+		ipphone(bool reader_enabled = true);
 		virtual ~ipphone();
 
 		void bind(const std::string& ip, std::uint16_t port);
 		void connect(const std::string& ip, std::uint16_t port);
 		void update_frame();
 		bool open_channel(protocol::channel::channel_type, protocol::channel::channel_flag);
+		void open_channel(std::unique_ptr<channel::channel_wrapper>&&, protocol::channel::channel_flag fl);
+		std::unique_ptr<channel::channel_wrapper> close_channel(const channel::channel_wrapper*);
 		channel_map_type& channels();
 
 		virtual void on_keep_alive(protocol::connection&, const protocol::message::keep_alive*, std::size_t) override;

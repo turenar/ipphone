@@ -4,15 +4,19 @@
 #include "ipp/channel/sound_channel.hxx"
 #include "ipp/device/sox_read_handler.hxx"
 #include "ipp/device/sox_write_handler.hxx"
+#include "ipp/channel/file_channel.hxx"
 
 namespace ipp {
 	namespace {
 		std::unique_ptr<channel::channel_wrapper>
-		create_channel(ipphone& ipp, std::uint32_t ch_id, protocol::channel::channel_type ty) {
+		create_channel(ipphone& ipp, std::uint32_t ch_id, protocol::channel::channel_type ty,
+		               protocol::channel::channel_flag = protocol::channel::channel_flag::none) {
 			LOG(WARNING) << "creating channel" << ch_id;
 			switch (ty) {
 				case protocol::channel::channel_type::sound:
 					return std::make_unique<channel::sound_channel>(ipp, ch_id, ty);
+				case protocol::channel::channel_type::file:
+					return std::make_unique<channel::file_channel>(ipp, ch_id, ty);
 				default:
 					return nullptr;
 			}
@@ -47,7 +51,7 @@ namespace ipp {
 
 	bool ipphone::open_channel(protocol::channel::channel_type ty, protocol::channel::channel_flag fl) {
 		uint32_t ch_id = static_cast<std::uint32_t>(_rnd());
-		auto ch = create_channel(*this, ch_id, ty);
+		auto ch = create_channel(*this, ch_id, ty, fl);
 		if (ch) {
 			_channels.emplace(ch_id, std::move(ch));
 			for (auto& connection : _manager.get_connections()) {
@@ -60,6 +64,17 @@ namespace ipp {
 		}
 	}
 
+	void ipphone::open_channel(std::unique_ptr<channel::channel_wrapper>&& ptr, protocol::channel::channel_flag fl) {
+		uint32_t ch_id = static_cast<std::uint32_t>(_rnd());
+		ptr->ch_id(ch_id);
+		channel::channel_wrapper::channel_type type = ptr->type();
+		_channels.emplace(ch_id, std::move(ptr));
+		for (auto& connection : _manager.get_connections()) {
+			connection.second->protocol().channel_open(ch_id, type, fl);
+		}
+	}
+
+
 	ipphone::channel_map_type& ipphone::channels() {
 		return _channels;
 	}
@@ -71,10 +86,17 @@ namespace ipp {
 	void ipphone::on_disconnect(protocol::connection&, const protocol::message::disconnect*, std::size_t) {}
 
 	void ipphone::on_channel_open(protocol::connection&, const protocol::message::channel_open* dat, std::size_t) {
+		auto it = _channels.find(dat->ch_id);
+		if (it != _channels.end()) {
+			return;
+		}
 		auto ch = create_channel(*this, dat->ch_id, dat->ch_type);
 		if (ch) {
 			uint32_t ch_id = ch->ch_id();
 			_channels.emplace(ch_id, std::move(ch));
+			for (auto& connection : _manager.get_connections()) {
+				connection.second->protocol().channel_open(ch_id, dat->ch_type, dat->ch_flag);
+			}
 		}
 	}
 
@@ -88,7 +110,18 @@ namespace ipp {
 		}
 	}
 
-	void ipphone::on_channel_close(protocol::connection&, const protocol::message::channel_close*, std::size_t) {}
+	void ipphone::on_channel_close(protocol::connection&, const protocol::message::channel_close* dat, std::size_t) {
+		auto it = _channels.find(dat->ch_id);
+		if (it == _channels.end()) {
+			return;
+		}
+		LOG(INFO) << "close channel" << dat->ch_id;
+		it->second->close();
+		_channels.erase(it);
+		for (auto& connection : _manager.get_connections()) {
+			connection.second->protocol().channel_close(dat->ch_id);
+		}
+	}
 
 	const std::unique_ptr<device::handler>& ipphone::reader_device() {
 		if (!_reader && _reader_enabled) {

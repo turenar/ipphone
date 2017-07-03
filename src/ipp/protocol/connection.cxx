@@ -11,12 +11,12 @@ namespace ipp {
 		namespace {
 			std::size_t parse_packet(std::uint8_t* buf, std::size_t len) {
 				if (len < sizeof(packet::packet_header)) {
-					LOG(ERROR) << "corrupted packet; received len=" << len;
+//					LOG(ERROR) << "corrupted packet; received len=" << len;
 					return 0;
 				}
 				packet::packet_header* header = reinterpret_cast<packet::packet_header*>(buf);
 				if (len < header->size) {
-					LOG(ERROR) << "corrupted packet; received len=" << len << ", packet len=" << header->size;
+//					LOG(ERROR) << "corrupted packet; received len=" << len << ", packet len=" << header->size;
 					return 0;
 				}
 				return header->size;
@@ -29,7 +29,7 @@ namespace ipp {
 					LOG(WARNING) << "broken message: required_size=" << required_len << ", actual_size=" << len;
 					return false;
 				}
-				LOG(INFO) << "dispatching " << typeid(Dispatcher).name();
+//				LOG(INFO) << "dispatching " << typeid(Dispatcher).name();
 				((&con.get_listener())->*dispatcher)(con, reinterpret_cast<const MessageType*>(msg + 1), len - 1);
 				return true;
 			}
@@ -69,7 +69,6 @@ namespace ipp {
 		void connection::consume() {
 			while (_con.recvable(std::chrono::milliseconds(0))) {
 				std::size_t len = _con.recv(_buf + _remain_len, sizeof(_buf) - _remain_len);
-				LOG(DEBUG) << _remain_len << ":" << len;
 				_remain_len += len;
 				if (len == 0) {
 					IPP_THROW_EXCEPTION(ipp_exception("Connection closed"));

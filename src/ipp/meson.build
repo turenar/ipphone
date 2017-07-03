@@ -5,6 +5,7 @@ g3logger_dep = dependency('g3logger',
 )
 
 libipphone_files = [
+	'channel/file_channel.cxx',
 	'channel/sound_channel.cxx',
 	'device/handler.cxx',
 	'device/sox_read_handler.cxx',

@@ -27,7 +27,7 @@ namespace ipp {
 					}
 					break;
 				}
-				LOG(DEBUG) << buf.str();
+//				LOG(DEBUG) << buf.str();
 #endif
 			}
 		}

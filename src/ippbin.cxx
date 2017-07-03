@@ -10,6 +10,7 @@
 #include "ipp/protocol/ippp.hxx"
 #include "ipp/protocol/protocol_listener.hxx"
 #include "ipp/util/buffer.hxx"
+#include "ipp/channel/file_channel.hxx"
 
 namespace {
 	auto prepare_logger() -> decltype(g3::LogWorker::createLogWorker()) {
@@ -44,6 +45,10 @@ int main(int argc, char** argv) {
 			ipp::ipphone ip(true);
 			ip.connect("127.0.0.1", 12345);
 			ip.open_channel(ipp::protocol::channel::channel_type::sound, ipp::protocol::channel::channel_flag::none);
+			ip.open_channel(
+					std::make_unique<ipp::channel::file_channel>(ip, 0, ipp::protocol::channel::channel_type::file,
+					                                             "src/ippbin"),
+					ipp::protocol::channel::channel_flag::none);
 			while (true) {
 				ip.update_frame();
 			}

@@ -8,6 +8,7 @@ namespace ipp {
 			enum class channel_type : std::uint8_t {
 				unknown,
 				sound,
+				file,
 			};
 		}
 	}

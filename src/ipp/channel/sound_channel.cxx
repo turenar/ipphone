@@ -24,7 +24,7 @@ namespace ipp {
 			}
 			const sound_header* header = reinterpret_cast<const sound_header*>(buf);
 			const std::uint8_t* body = buf + sizeof(sound_header);
-			LOG(DEBUG) << "receive samples: " << (c += header->samples);
+//			LOG(DEBUG) << "receive samples: " << (c += header->samples);
 			_ipp.writer_device()->buffer().write(reinterpret_cast<const std::uint16_t*>(body), header->samples << 1);
 		}
 
@@ -47,11 +47,12 @@ namespace ipp {
 			}
 			buf[2] = (len >> 1) & 0xff; // stereo..
 			buf[3] = len >> 9;
-			LOG(DEBUG) << "send samples: " << (c += len / 2);
+//			LOG(DEBUG) << "send samples: " << (c += len / 2);
 			for (auto& pair : _ipp.connection_manager().get_connections()) {
 				pair.second->protocol().channel_data(_channel_id, reinterpret_cast<std::uint8_t*>(buf),
 				                                    sizeof(sound_header) + len * sizeof(std::uint16_t));
 			}
+			return;
 		}
 
 		void sound_channel::close() {

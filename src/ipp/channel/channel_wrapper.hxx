@@ -15,6 +15,7 @@ namespace ipp {
 
 			virtual channel_type type() const = 0;
 			virtual std::uint32_t ch_id() const;
+			virtual void ch_id(std::uint32_t);
 
 			virtual void receive(const std::uint8_t* buf, const std::uint16_t len) = 0;
 			virtual void flush_packets() = 0;
@@ -25,5 +26,8 @@ namespace ipp {
 		};
 
 		inline std::uint32_t channel_wrapper::ch_id() const { return _channel_id; }
+
+		inline void channel_wrapper::ch_id(std::uint32_t id) { _channel_id = id; }
+
 	}
 }
