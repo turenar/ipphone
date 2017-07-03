@@ -33,7 +33,7 @@ namespace ippbin {
 		std::string readline();
 
 		void register_command(std::string name, command_callback_type callback);
-		void parse_command(const std::string&);
+		bool parse_command(const std::string&);
 
 		void enable_timeout();
 		bool check_timeout();

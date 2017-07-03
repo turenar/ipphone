@@ -6,6 +6,14 @@
 
 namespace ippbin {
 	namespace {
+		struct exit_exception : command::command_exception {
+			exit_exception() : command_exception("") {}
+		};
+
+		void exit_terminal(terminal&, terminal::command_vector&&) {
+			throw exit_exception();
+		}
+
 		void register_commands(terminal& t) {
 			t.register_command("enable_timeout", command::timeout_enable);
 			t.register_command("10yen", command::timeout_insert);
@@ -15,6 +23,9 @@ namespace ippbin {
 			t.register_command("connect", command::phone_connect);
 			t.register_command("debug", command::phone_debug);
 			t.register_command("sendfile", command::phone_sendfile);
+			t.register_command("quit", &exit_terminal);
+			t.register_command("exit", &exit_terminal);
+			t.register_command("q", &exit_terminal);
 		}
 	}
 
@@ -25,7 +36,9 @@ namespace ippbin {
 	}
 
 	terminal::~terminal() {
-		endwin();
+		if (!isendwin()) {
+			endwin();
+		}
 	}
 
 	void terminal::run() {
@@ -43,19 +56,22 @@ namespace ippbin {
 			_ipp.update_frame();
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
+		endwin();
 		std::cout << "Bye." << std::endl;
 	}
 
 	bool terminal::loop() {
 		std::string line = readline();
 		if (!line.empty()) {
-			parse_command(line);
+			if (!parse_command(line)) {
+				return false;
+			}
 		}
 
 		return !check_timeout();
 	}
 
-	void terminal::parse_command(const std::string& cmd) {
+	bool terminal::parse_command(const std::string& cmd) {
 		println(cmd, color_pair_default);
 
 		std::size_t argc = static_cast<std::size_t>( std::count(cmd.cbegin(), cmd.cend(), ' '));
@@ -78,18 +94,21 @@ namespace ippbin {
 		}
 		if (args.empty()) {
 			// no command
-			return;
+			return true;
 		}
 		auto it = _commands.find(args[0]);
 		if (it != _commands.end()) {
 			try {
 				it->second(*this, std::move(args));
+			} catch (exit_exception&) {
+				return false;
 			} catch (command::command_exception& ex) {
 				println(ex.what(), color_pair_error);
 			}
 		} else {
 			println(std::string("unknown command: ") + cmd, color_pair_error);
 		}
+		return true;
 	}
 
 	void terminal::enable_timeout() {
