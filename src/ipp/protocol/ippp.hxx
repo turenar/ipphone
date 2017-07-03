@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <mutex>
 #include "ipp/network/socket_connection.hxx"
 #include "ipp/protocol/channel/channel_flag.hxx"
 #include "ipp/protocol/channel/channel_type.hxx"
@@ -30,6 +31,7 @@ namespace ipp {
 		private:
 			network::socket_connection _con;
 			packet::packet_builder _packet;
+			std::mutex _mutex;
 		};
 	}
 }
