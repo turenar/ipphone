@@ -33,7 +33,14 @@ int main(int argc, char** argv) {
 
 	ipp::util::buffer<std::uint16_t> buf(4);
 	try {
-		if (argc >= 2) {
+		if (argc >= 3) {
+			ipp::ipphone ip(true);
+			ip.connect(argv[1], std::stoi(argv[2]));
+			ip.open_channel(ipp::protocol::channel::channel_type::sound, ipp::protocol::channel::channel_flag::none);
+			while (true) {
+				ip.update_frame();
+			}
+		} else if (argc >= 2) {
 			ipp::ipphone ip(true);
 			ip.connect("127.0.0.1", 12345);
 			ip.open_channel(ipp::protocol::channel::channel_type::sound, ipp::protocol::channel::channel_flag::none);
@@ -42,7 +49,7 @@ int main(int argc, char** argv) {
 			}
 		} else {
 			ipp::ipphone ip(false);
-			ip.bind("127.0.0.1", 12345);
+			ip.bind("0.0.0.0", 12345);
 			while (true) {
 				ip.update_frame();
 			}
