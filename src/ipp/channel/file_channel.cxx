@@ -52,7 +52,7 @@ namespace ipp {
 				return;
 			}
 
-			std::uint8_t buf[4096];
+			std::uint8_t buf[1024];
 			if (!_file_name_notified) {
 				buf[0] = 0;
 				buf[1] = static_cast<std::uint8_t>(_file_name.length());
