@@ -24,8 +24,8 @@ namespace ipp {
 								encoded[i] = static_cast<std::uint16_t>(buf[i] >> 16);
 							}
 							buffer.write(encoded.begin(), read_len);
-							LOG(DEBUG) << '[' << (count += read_len) << "] read_len " << read_len
-							           << ", buffered" << buffer.buffered();
+//							LOG(DEBUG) << '[' << (count += read_len) << "] read_len " << read_len
+//							           << ", buffered" << buffer.buffered();
 						}
 					}
 				}

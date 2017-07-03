@@ -27,8 +27,8 @@ namespace ipp {
 								buf[i] = snd << 16;
 							}
 							_format.write(buf.begin(), read_len);
-							LOG(DEBUG) << '[' << (count += read_len) << "] written len " << read_len
-							           << ", buffered" << buffer.buffered();
+//							LOG(DEBUG) << '[' << (count += read_len) << "] written len " << read_len
+//							           << ", buffered" << buffer.buffered();
 						}
 						fs.write(reinterpret_cast<char*>(buf.begin()), read_len * sizeof(sox::sample_t));
 					}
