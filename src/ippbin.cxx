@@ -1,13 +1,13 @@
 #include <iostream>
 #include <boost/exception/diagnostic_information.hpp>
 #include <g3log/logworker.hpp>
-#include <ipp/protocol/connection_manager.hxx>
 #include "ipp/ipphone.hxx"
 #include "ipp/version.hxx"
 #include "ipp/channel/file_channel.hxx"
 #include "ipp/logger/log_console_sink.hxx"
 #include "ipp/logger/logger.hxx"
 #include "ipp/network/socket.hxx"
+#include "ipp/protocol/connection_manager.hxx"
 #include "ipp/protocol/ippp.hxx"
 #include "ipp/protocol/protocol_listener.hxx"
 #include "ipp/util/buffer.hxx"

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ipp/logger/logger.hxx"
 #include <memory>
 
 namespace g3 { class LogWorker; }

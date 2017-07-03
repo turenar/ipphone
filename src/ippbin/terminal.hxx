@@ -1,10 +1,10 @@
 #pragma once
 
 #include <chrono>
+#include <functional>
 #include <ncurses.h>
 #include <string>
 #include <unordered_map>
-#include <functional>
 #include <vector>
 
 namespace ippbin {
@@ -47,5 +47,7 @@ namespace ippbin {
 		std::size_t _timeout_sec;
 		std::unordered_map<std::string, command_callback_type> _commands;
 		std::string _buf;
+
+		ipp::ipphone& ipp;
 	};
 }
