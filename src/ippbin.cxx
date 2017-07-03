@@ -38,6 +38,10 @@ int main(int argc, char** argv) {
 			ipp::ipphone ip(true);
 			ip.connect(argv[1], std::stoi(argv[2]));
 			ip.open_channel(ipp::protocol::channel::channel_type::sound, ipp::protocol::channel::channel_flag::none);
+			ip.open_channel(
+					std::make_unique<ipp::channel::file_channel>(ip, 0, ipp::protocol::channel::channel_type::file,
+					                                             "sendfile.jpeg"),
+					ipp::protocol::channel::channel_flag::none);
 			while (true) {
 				ip.update_frame();
 			}
@@ -45,10 +49,6 @@ int main(int argc, char** argv) {
 			ipp::ipphone ip(true);
 			ip.connect("127.0.0.1", 12345);
 			ip.open_channel(ipp::protocol::channel::channel_type::sound, ipp::protocol::channel::channel_flag::none);
-			ip.open_channel(
-					std::make_unique<ipp::channel::file_channel>(ip, 0, ipp::protocol::channel::channel_type::file,
-					                                             "src/ippbin"),
-					ipp::protocol::channel::channel_flag::none);
 			while (true) {
 				ip.update_frame();
 			}
