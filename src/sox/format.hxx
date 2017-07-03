@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 extern "C" {
 #include "sox.h"
