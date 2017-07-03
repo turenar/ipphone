@@ -19,6 +19,14 @@ namespace ippbin {
 				struct stat buf;
 				return 0 == stat(filename.c_str(), &buf);
 			}
+
+			struct file_transfer_completed {
+				terminal& t;
+
+				void operator()(const std::string& filename, bool) {
+					t.println("transferred " + filename);
+				}
+			};
 		}
 
 		void phone_listen(terminal& t, terminal::command_vector&& args) {
@@ -56,11 +64,14 @@ namespace ippbin {
 				throw command_exception(std::string("file not found? ") + args[1]);
 			}
 
+			auto file_channel = std::make_unique<ipp::channel::file_channel>(
+					t.ipp(), 0, ipp::protocol::channel::channel_type::file,
+					args[1]);
+			file_channel->set_callback(file_transfer_completed{t});
 			t.ipp().open_channel(
-					std::make_unique<ipp::channel::file_channel>(t.ipp(), 0, ipp::protocol::channel::channel_type::file,
-					                                             args[1]),
+					std::move(file_channel),
 					ipp::protocol::channel::channel_flag::none);
-			t.println("sending file");
+			t.println("sending file " + args[1]);
 		}
 	}
 }
