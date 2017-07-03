@@ -41,7 +41,7 @@ namespace ipp {
 			}
 			std::size_t len = dev->buffer().read(
 					reinterpret_cast<std::uint16_t*>(buf + sizeof(sound_header)),
-					device::handler::default_buffered_samples);
+					512 * 2);
 			if (len == 0) {
 				return;
 			}
