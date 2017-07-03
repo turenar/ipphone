@@ -1,8 +1,8 @@
 #include "ippbin/terminal.hxx"
 #include <iostream>
-#include "ippbin/command/command_exception.hxx"
 #include "ipp/logger/logger.hxx"
 #include "ippbin/command/command.hxx"
+#include "ippbin/command/command_exception.hxx"
 
 namespace ippbin {
 	namespace {
@@ -14,6 +14,7 @@ namespace ippbin {
 			t.register_command("listen", command::phone_listen);
 			t.register_command("connect", command::phone_connect);
 			t.register_command("debug", command::phone_debug);
+			t.register_command("sendfile", command::phone_sendfile);
 		}
 	}
 
@@ -40,7 +41,7 @@ namespace ippbin {
 		while (loop()) {
 			// blur blur..
 			_ipp.update_frame();
-			std::this_thread::sleep_for(std::chrono::milliseconds(16));
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
 		std::cout << "Bye." << std::endl;
 	}

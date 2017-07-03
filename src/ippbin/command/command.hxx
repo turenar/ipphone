@@ -10,5 +10,6 @@ namespace ippbin {
 		void phone_listen(terminal&, terminal::command_vector&&);
 		void phone_connect(terminal&, terminal::command_vector&&);
 		void phone_debug(terminal&, terminal::command_vector&&);
+		void phone_sendfile(terminal&, terminal::command_vector&&);
 	}
 }
