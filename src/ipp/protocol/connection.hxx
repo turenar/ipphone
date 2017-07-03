@@ -26,8 +26,6 @@ namespace ipp {
 			void consume();
 
 		private:
-			std::uint8_t _buf[65536 * 2];
-			std::size_t _remain_len = 0;
 			ippp _protocol;
 			network::socket_connection _con;
 			listener_type& _listener;
