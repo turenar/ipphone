@@ -18,7 +18,7 @@ namespace ipp {
 					IPP_THROW_EXCEPTION(network::socket_exception(errno, std::system_category()));
 				}
 			}
-			_file_name = file_name;
+			_file_name = basename(file_name.c_str());
 		}
 
 		void file_channel::receive(const std::uint8_t* buf, const std::uint16_t len) {
