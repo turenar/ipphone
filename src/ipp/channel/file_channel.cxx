@@ -18,7 +18,7 @@ namespace ipp {
 					IPP_THROW_EXCEPTION(network::socket_exception(errno, std::system_category()));
 				}
 			}
-			_file_name = basename(file_name.c_str());
+			_file_name = file_name;
 		}
 
 		void file_channel::receive(const std::uint8_t* buf, const std::uint16_t len) {
@@ -50,12 +50,13 @@ namespace ipp {
 
 			std::uint8_t buf[8192];
 			if (!_file_name_notified) {
+				std::string base_file_name = basename(_file_name.c_str());
 				buf[0] = 0;
-				buf[1] = static_cast<std::uint8_t>(_file_name.length());
-				std::memcpy(buf + 2, _file_name.c_str(), _file_name.length() + 1);
+				buf[1] = static_cast<std::uint8_t>(base_file_name.length());
+				std::memcpy(buf + 2, base_file_name.c_str(), base_file_name.length() + 1);
 				for (auto& pair : _ipp.connection_manager().get_connections()) {
 					pair.second->protocol().channel_data(_channel_id, buf,
-					                                     static_cast<std::uint16_t>( _file_name.length() + 3));
+					                                     static_cast<std::uint16_t>(base_file_name.length() + 3));
 				}
 				_file_name_notified = true;
 			}
@@ -81,7 +82,14 @@ namespace ipp {
 		}
 
 		void file_channel::close() {
+			if (_callback) {
+				_callback(_file_name, _send_mode);
+			}
 			_fs.close();
+		}
+
+		void file_channel::set_callback(callback_type c) {
+			_callback = std::move(c);
 		}
 	}
 }

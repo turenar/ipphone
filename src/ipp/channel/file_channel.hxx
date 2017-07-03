@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <functional>
 #include <fstream>
 #include "ipp/channel/channel_wrapper.hxx"
 
@@ -8,9 +9,9 @@ namespace ipp {
 	class ipphone;
 	namespace channel {
 		class file_channel : public channel_wrapper {
-			static constexpr std::size_t buffer_packet = 16;
 		public:
 			using channel_type = protocol::channel::channel_type;
+			using callback_type = std::function<void(const std::string&, bool)>;
 
 			file_channel(ipphone&, uint32_t ch_id, channel_type ch_type, std::string file_name = "");
 
@@ -22,11 +23,14 @@ namespace ipp {
 			virtual void flush_packets() override;
 			virtual void close() override;
 
+			void set_callback(callback_type);
+
 		protected:
 			ipphone& _ipp;
 			channel_type _ch_type;
 			std::fstream _fs;
 			std::string _file_name;
+			callback_type _callback;
 			bool _send_mode;
 			bool _file_name_notified = false;
 		};
