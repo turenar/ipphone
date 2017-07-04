@@ -33,6 +33,7 @@ namespace ipp {
 				std::string file_name{reinterpret_cast<const char*>(buf), name_len};
 				file_name += '.';
 				file_name += std::to_string(getpid());
+				_file_name = file_name;
 				LOG(INFO) << "opened " << file_name;
 				_fs.open(file_name, std::ios::out | std::ios::binary | std::ios::trunc);
 			} else {
