@@ -37,6 +37,8 @@ $ ninja test
 * single TCP connection
 * semi-fixed port, no "Address in use" error
 
+* multi-threaded application (ただしデバイス入出力スレッド、ffmpegプロセスexecのほかはsingle-threaded)
+
 ## Execution
 
 ```sh
