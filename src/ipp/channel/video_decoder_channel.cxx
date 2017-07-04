@@ -34,13 +34,11 @@ namespace ipp {
 				_context->flags |= AV_CODEC_FLAG_TRUNCATED;
 			} // we do not send complete frames
 			if (avcodec_open2(_context, _codec, NULL) < 0) {
-				fprintf(stderr, "Could not open codec\n");
-				exit(1);
+				IPP_THROW_EXCEPTION(ipp_exception("could not open codec"));
 			}
 			_frame = av_frame_alloc();
 			if (!_frame) {
-				fprintf(stderr, "Could not allocate video frame\n");
-				exit(1);
+				IPP_THROW_EXCEPTION(ipp_exception("could not allocate video frame"));
 			}
 		}
 
@@ -48,10 +46,20 @@ namespace ipp {
 			std::memcpy(_inbuf, buf, len);
 			_avpkt.size = len;
 			_avpkt.data = _inbuf;
-			avcodec_send_packet(_context, &_avpkt);
-			while (avcodec_receive_frame(_context, _frame) == 0) {
+			int got_frame;
+			int frame_len = avcodec_decode_video2(_context, _frame, &got_frame, &_avpkt);
+			if (frame_len < 0) {
+				fprintf(stderr, "Error while decoding frame %d\n", _frame_count);
+
+			}
+			if (got_frame) {
+				LOG(DEBUG) << "Saving frame " << _frame_count;
 				callback(_frame->data[0], _frame->linesize[0], _frame->width, _frame->height);
 				_frame_count++;
+			}
+			if (_avpkt.data) {
+				_avpkt.size -= len;
+				_avpkt.data += len;
 			}
 		}
 
