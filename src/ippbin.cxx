@@ -1,6 +1,7 @@
 #include <iostream>
 #include <boost/exception/diagnostic_information.hpp>
 #include <g3log/logworker.hpp>
+#include "ipp/channel/video_encoder_channel.hxx"
 #include "ipp/ipphone.hxx"
 #include "ipp/version.hxx"
 #include "ipp/channel/file_channel.hxx"
@@ -49,6 +50,10 @@ int main(int argc, char** argv) {
 			ipp::ipphone ip(true);
 			ip.connect("127.0.0.1", 12345);
 			ip.open_channel(ipp::protocol::channel::channel_type::sound, ipp::protocol::channel::channel_flag::none);
+			ip.open_channel(
+					std::make_unique<ipp::channel::video_encoder_channel>(
+							ip, 0, ipp::protocol::channel::channel_type::mpeg2video),
+					ipp::protocol::channel::channel_flag::none);
 			while (true) {
 				ip.update_frame();
 			}

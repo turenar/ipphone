@@ -1,7 +1,9 @@
 #pragma once
 
+#include <chrono>
 #include <utility>
 #include <unistd.h>
+#include "ipp/ipp_system_exception.hxx"
 
 #ifndef NDEBUG
 #include "ipp/logger/logger.hxx"
@@ -25,6 +27,8 @@ namespace ipp {
 		explicit operator fd_type();
 		fd_type get();
 		explicit operator bool() const;
+
+		bool readable(std::chrono::milliseconds timeout) const;
 
 	private:
 		fd_type _fd;
@@ -62,4 +66,20 @@ namespace ipp {
 	inline unique_fd::fd_type unique_fd::get() { return _fd; }
 
 	inline unique_fd::operator bool() const { return _fd >= 0; }
+
+	inline bool unique_fd::readable(std::chrono::milliseconds timeout) const {
+		fd_set rfds;
+		FD_ZERO(&rfds);
+		FD_SET(_fd, &rfds);
+
+		timeval tv;
+		auto timeout_sec = std::chrono::duration_cast<std::chrono::seconds>(timeout);
+		tv.tv_sec = timeout_sec.count();
+		tv.tv_usec = (timeout - timeout_sec).count();
+		int result = ::select(_fd + 1, &rfds, NULL, NULL, &tv);
+		if (result < 0) {
+			IPP_THROW_EXCEPTION(ipp_system_exception(errno, std::system_category()));
+		}
+		return result > 0;
+	}
 }

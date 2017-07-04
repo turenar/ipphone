@@ -4,6 +4,7 @@
 #include "ippbin/command/command.hxx"
 #include "ippbin/command/command_exception.hxx"
 #include "ipp/channel/file_channel.hxx"
+#include "ipp/channel/video_decoder_channel.hxx"
 
 namespace ippbin {
 	namespace {
@@ -24,6 +25,7 @@ namespace ippbin {
 			t.register_command("connect", command::phone_connect);
 			t.register_command("debug", command::phone_debug);
 			t.register_command("sendfile", command::phone_sendfile);
+			t.register_command("video", command::phone_video);
 			t.register_command("quit", &exit_terminal);
 			t.register_command("exit", &exit_terminal);
 			t.register_command("q", &exit_terminal);
@@ -203,6 +205,16 @@ namespace ippbin {
 			fc->set_callback(
 					[this](const std::string& filename, bool) { this->println("transfer done: " + filename); });
 		}
+		auto vdc = dynamic_cast<ipp::channel::video_decoder_channel*>(p);
+		if (vdc) {
+			using namespace std::placeholders;
+			println("incoming video channel");
+			vdc->callback(std::bind(&terminal::video_frame_hook, this, _1, _2, _3, _4));
+		}
+	}
+
+	void terminal::video_frame_hook(uint8_t* mono_data, int line_height, int width, int height) {
+		println("decoded frame");
 	}
 }
 

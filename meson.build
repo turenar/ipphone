@@ -47,5 +47,9 @@ g3logger_dep = dependency('g3logger',
     default_options: ['dynamic_logging=true']
 )
 
+libavcodec_dep = dependency('libavcodec')
+libavutil_dep = dependency('libavutil')
+ffmpeg_dep = declare_dependency(dependencies: [libavcodec_dep, libavutil_dep])
+
 subdir('src')
 subdir('test')

@@ -1,4 +1,5 @@
 #include <sys/stat.h>
+#include "ipp/channel/video_encoder_channel.hxx"
 #include "ipp/channel/file_channel.hxx"
 #include "ippbin/command/command.hxx"
 #include "ippbin/command/command_exception.hxx"
@@ -72,6 +73,13 @@ namespace ippbin {
 					std::move(file_channel),
 					ipp::protocol::channel::channel_flag::none);
 			t.println("sending file " + args[1]);
+		}
+
+		void phone_video(terminal& t, terminal::command_vector&&) {
+			t.ipp().open_channel(std::make_unique<ipp::channel::video_encoder_channel>(t.ipp(), 0,
+			                                                                           ipp::protocol::channel::channel_type::mpeg2video),
+			                     ipp::protocol::channel::channel_flag::receive_only);
+			t.println("opening video channel");
 		}
 	}
 }

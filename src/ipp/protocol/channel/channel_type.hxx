@@ -9,6 +9,7 @@ namespace ipp {
 				unknown,
 				sound,
 				file,
+				mpeg2video,
 			};
 		}
 	}

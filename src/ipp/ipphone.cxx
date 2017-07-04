@@ -1,6 +1,7 @@
 #include "ipp/ipphone.hxx"
 #include <chrono>
 #include <fstream>
+#include "ipp/channel/video_decoder_channel.hxx"
 #include "ipp/channel/file_channel.hxx"
 #include "ipp/channel/sound_channel.hxx"
 #include "ipp/device/sox_read_handler.hxx"
@@ -17,6 +18,8 @@ namespace ipp {
 					return std::make_unique<channel::sound_channel>(ipp, ch_id, ty);
 				case protocol::channel::channel_type::file:
 					return std::make_unique<channel::file_channel>(ipp, ch_id, ty);
+				case protocol::channel::channel_type::mpeg2video:
+					return std::make_unique<channel::video_decoder_channel>(ipp, ch_id, ty);
 				default:
 					return nullptr;
 			}
