@@ -14,6 +14,8 @@ namespace ipp {
 	class ipphone : public protocol::protocol_listener {
 	public:
 		using channel_map_type = std::unordered_map<std::uint32_t, std::unique_ptr<channel::channel_wrapper>>;
+		using channel_open_callback = std::function<void(std::unique_ptr<channel::channel_wrapper>&,
+		                                                 protocol::channel::channel_flag)>;
 
 		ipphone(bool reader_enabled = true);
 		virtual ~ipphone();
@@ -23,7 +25,7 @@ namespace ipp {
 		void update_frame();
 		bool open_channel(protocol::channel::channel_type, protocol::channel::channel_flag);
 		void open_channel(std::unique_ptr<channel::channel_wrapper>&&, protocol::channel::channel_flag fl);
-		std::unique_ptr<channel::channel_wrapper> close_channel(const channel::channel_wrapper*);
+		void open_channel_callback(channel_open_callback);
 		channel_map_type& channels();
 		void enable_reader(bool enabled);
 
@@ -44,6 +46,7 @@ namespace ipp {
 
 	private:
 		bool _reader_enabled;
+		channel_open_callback _channel_open_callback;
 		std::mt19937 _rnd;
 		protocol::connection_manager _manager;
 		channel_map_type _channels;

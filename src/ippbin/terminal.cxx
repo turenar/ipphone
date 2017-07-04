@@ -3,6 +3,7 @@
 #include "ipp/logger/logger.hxx"
 #include "ippbin/command/command.hxx"
 #include "ippbin/command/command_exception.hxx"
+#include "ipp/channel/file_channel.hxx"
 
 namespace ippbin {
 	namespace {
@@ -32,7 +33,10 @@ namespace ippbin {
 	constexpr int terminal::timeout_warn_sec;
 
 	terminal::terminal() {
+		using namespace std::placeholders;
 		register_commands(*this);
+		_ipp.open_channel_callback(
+				ipp::ipphone::channel_open_callback(std::bind(&terminal::channel_open_hook, this, _1, _2)));
 	}
 
 	terminal::~terminal() {
@@ -188,6 +192,18 @@ namespace ippbin {
 	}
 
 	ipp::ipphone& terminal::ipp() { return _ipp; }
+
+	void
+	terminal::channel_open_hook(std::unique_ptr<ipp::channel::channel_wrapper>& ptr,
+	                            ipp::protocol::channel::channel_flag) {
+		ipp::channel::channel_wrapper* p = ptr.get();
+		auto fc = dynamic_cast<ipp::channel::file_channel*>(p);
+		if (fc) {
+			println("incoming file channel");
+			fc->set_callback(
+					[this](const std::string& filename, bool) { this->println("transfer done: " + filename); });
+		}
+	}
 }
 
 

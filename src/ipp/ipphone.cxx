@@ -52,6 +52,9 @@ namespace ipp {
 	bool ipphone::open_channel(protocol::channel::channel_type ty, protocol::channel::channel_flag fl) {
 		uint32_t ch_id = static_cast<std::uint32_t>(_rnd());
 		auto ch = create_channel(*this, ch_id, ty, fl);
+		if (ch && _channel_open_callback) {
+			_channel_open_callback(ch, fl);
+		}
 		if (ch) {
 			_channels.emplace(ch_id, std::move(ch));
 			for (auto& connection : _manager.get_connections()) {
@@ -74,7 +77,6 @@ namespace ipp {
 		}
 	}
 
-
 	ipphone::channel_map_type& ipphone::channels() {
 		return _channels;
 	}
@@ -91,6 +93,9 @@ namespace ipp {
 			return;
 		}
 		auto ch = create_channel(*this, dat->ch_id, dat->ch_type);
+		if (ch && _channel_open_callback) {
+			_channel_open_callback(ch, protocol::channel::channel_flag::none);
+		}
 		if (ch) {
 			uint32_t ch_id = ch->ch_id();
 			_channels.emplace(ch_id, std::move(ch));
@@ -140,5 +145,9 @@ namespace ipp {
 
 	void ipphone::enable_reader(bool enabled) {
 		_reader_enabled = enabled;
+	}
+
+	void ipphone::open_channel_callback(channel_open_callback c) {
+		_channel_open_callback = std::move(c);
 	}
 }

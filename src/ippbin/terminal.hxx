@@ -57,5 +57,7 @@ namespace ippbin {
 		std::string _buf;
 
 		ipp::ipphone _ipp;
+
+		void channel_open_hook(std::unique_ptr<ipp::channel::channel_wrapper>&, ipp::protocol::channel::channel_flag);
 	};
 }
