@@ -38,16 +38,7 @@ namespace ippbin {
 		if (SIXEL_FAILED(result)) {
 			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
 		}
-		result = sixel_dither_new(&_dither, 256, _allocator);
-		if (SIXEL_FAILED(result)) {
-			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
-		}
 		result = sixel_encoder_new(&_encoder, nullptr);
-		if (SIXEL_FAILED(result)) {
-			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
-		}
-		result = sixel_dither_initialize(_dither, _buf.get(), width, height,
-		                                 SIXEL_PIXELFORMAT_G8, LARGE_AUTO, REP_AUTO, QUALITY_AUTO);
 		if (SIXEL_FAILED(result)) {
 			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
 		}
@@ -66,7 +57,19 @@ namespace ippbin {
 			ptr += width;
 		}
 		initialize(width, height);
-		int result = sixel_encode(_buf.get(), width, height, 8, _dither, _output);
+		if (_dither) {
+			sixel_dither_unref(_dither);
+		}
+		int result = sixel_dither_new(&_dither, 256, _allocator);
+		if (SIXEL_FAILED(result)) {
+			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
+		}
+		result = sixel_dither_initialize(_dither, _buf.get(), width, height,
+		                                 SIXEL_PIXELFORMAT_G8, LARGE_AUTO, REP_AUTO, QUALITY_AUTO);
+		if (SIXEL_FAILED(result)) {
+			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
+		}
+		result = sixel_encode(_buf.get(), width, height, 8, _dither, _output);
 		if (SIXEL_FAILED(result)) {
 			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
 		}
