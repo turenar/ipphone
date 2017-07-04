@@ -17,11 +17,10 @@ namespace ipp {
 					display = ":1";
 				}
 
-				int nullfd = open("/dev/null", O_RDWR, 0);
+				int nullfd = open("/tmp/ffmpeg.out", O_RDWR | O_TRUNC | O_CREAT, 0);
 				if (nullfd < 0) {
 					throw ipp::ipp_system_exception("/dev/null", errno, std::system_category());
 				}
-
 
 				pid_t cpid = fork();
 				if (cpid == -1) {
@@ -38,7 +37,7 @@ namespace ipp {
 
 					const char* args[] = {
 							"ffmpeg",
-							"-video_size", "800x800",
+							"-video_size", "600x600",
 							"-f", "x11grab",
 							"-i", display,
 							"-r", "5",
