@@ -141,6 +141,10 @@ namespace ippbin {
 	}
 
 	void terminal::add_timeout(std::size_t sec) {
+		if (!_timeout_enabled) {
+			println("type 'enable_timeout' first");
+			return;
+		}
 		_timeout_warned = false;
 		_timeout_sec += sec;
 
