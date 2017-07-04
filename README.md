@@ -32,6 +32,11 @@ $ ninja test
 * ファイルの送受信
 * 画面キャプチャ
 
+## Advantages
+
+* single TCP connection
+* semi-fixed port, no "Address in use" error
+
 ## Execution
 
 ```sh
