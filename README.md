@@ -37,7 +37,8 @@ $ ninja test
 * single TCP connection
 * semi-fixed port, no "Address in use" error
 
-* multi-threaded application (ただしデバイス入出力スレッド、ffmpegプロセスexecのほかはsingle-threaded)
+* multi-threaded application (ただしデバイス入力スレッドおよび出力スレッド、ログフラッシュスレッド (g3log) のみ)。
+ネットワーク系と画面入出力はselectやncursesを利用したノンブロッキングIOを活用してシングルスレッド。
 
 ## Execution
 
