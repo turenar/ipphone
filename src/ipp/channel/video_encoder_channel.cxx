@@ -62,7 +62,7 @@ namespace ipp {
 			_read_fd = unique_fd(fork_gif_encoder());
 		}
 
-		void video_encoder_channel::receive(const std::uint8_t* buf, const std::uint16_t len) {
+		void video_encoder_channel::receive(const std::uint8_t*, const std::uint16_t) {
 			LOG(ERROR) << "#receive is called";
 		}
 

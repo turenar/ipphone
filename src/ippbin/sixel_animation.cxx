@@ -26,7 +26,7 @@ namespace ippbin {
 		}
 	}
 
-	void sixel_animation::initialize(int width, int height) {
+	void sixel_animation::initialize(int, int) {
 		if (_encoder != nullptr) {
 			return;
 		}
