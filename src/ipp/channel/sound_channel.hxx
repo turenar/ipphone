@@ -6,7 +6,7 @@
 namespace ipp {
 	class ipphone;
 	namespace channel {
-		class sound_channel : public channel_wrapper {
+		class sound_channel final : public channel_wrapper {
 			static constexpr std::size_t buffer_packet = 16;
 		public:
 			using channel_type = protocol::channel::channel_type;

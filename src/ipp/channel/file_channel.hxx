@@ -8,7 +8,7 @@
 namespace ipp {
 	class ipphone;
 	namespace channel {
-		class file_channel : public channel_wrapper {
+		class file_channel final : public channel_wrapper {
 		public:
 			using channel_type = protocol::channel::channel_type;
 			using callback_type = std::function<void(const std::string&, bool)>;

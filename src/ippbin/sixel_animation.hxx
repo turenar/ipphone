@@ -1,3 +1,5 @@
+#pragma once
+
 #include <sixel.h>
 #include <memory>
 #include <cstdio>

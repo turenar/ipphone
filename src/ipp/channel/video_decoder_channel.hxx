@@ -9,7 +9,7 @@ extern "C" {
 
 namespace ipp {
 	namespace channel {
-		class video_decoder_channel : public channel_wrapper {
+		class video_decoder_channel final : public channel_wrapper {
 		public:
 			using channel_type = protocol::channel::channel_type;
 			using callback_type = std::function<void(uint8_t*, int, int, int)>;

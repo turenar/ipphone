@@ -5,7 +5,7 @@
 
 namespace ipp {
 	namespace device {
-		class sox_write_handler : public handler {
+		class sox_write_handler final : public handler {
 		public:
 			sox_write_handler();
 

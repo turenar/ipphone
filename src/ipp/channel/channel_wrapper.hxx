@@ -14,9 +14,9 @@ namespace ipp {
 
 			virtual ~channel_wrapper() {}
 
-			virtual channel_type type() const;
-			virtual std::uint32_t ch_id() const;
-			virtual void ch_id(std::uint32_t);
+			channel_type type() const;
+			std::uint32_t ch_id() const;
+			void ch_id(std::uint32_t);
 
 			virtual void receive(const std::uint8_t* buf, const std::uint16_t len) = 0;
 			virtual void flush_packets() = 0;

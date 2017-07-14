@@ -5,7 +5,7 @@
 
 namespace ipp {
 	namespace channel {
-		class video_encoder_channel : public channel_wrapper {
+		class video_encoder_channel final : public channel_wrapper {
 		public:
 			using channel_type = protocol::channel::channel_type;
 

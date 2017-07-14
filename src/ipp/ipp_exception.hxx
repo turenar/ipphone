@@ -12,7 +12,7 @@ namespace ipp {
 	public:
 		explicit ipp_exception(std::string s) : _what(std::move(s)) {}
 
-		virtual const char* what() const noexcept override { return _what.c_str(); }
+		virtual const char* what() const noexcept override final { return _what.c_str(); }
 
 		virtual ~ipp_exception() {}
 

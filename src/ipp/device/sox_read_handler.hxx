@@ -5,7 +5,7 @@
 
 namespace ipp {
 	namespace device {
-		class sox_read_handler : public handler {
+		class sox_read_handler final : public handler {
 		public:
 			sox_read_handler();
 
