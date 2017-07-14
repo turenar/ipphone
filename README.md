@@ -1,3 +1,5 @@
+[![Build Status](https://turenar.xyz/jenkins/job/ipphone/badge/icon)](https://turenar.xyz/jenkins/job/ipphone/)
+
 ## How to build
 
 ### Build Requirements
