@@ -52,5 +52,7 @@ libavutil_dep = dependency('libavutil')
 ffmpeg_dep = declare_dependency(dependencies: [libavcodec_dep, libavutil_dep])
 libsixel_dep = dependency('libsixel')
 
+conf = configuration_data()
+
 subdir('src')
 subdir('test')

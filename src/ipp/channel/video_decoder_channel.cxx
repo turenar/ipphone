@@ -1,4 +1,5 @@
 #include <fcntl.h>
+#include "config.h"
 #include "ipp/logger/logger.hxx"
 #include "ipp/ipp_system_exception.hxx"
 #include "ipp/channel/video_decoder_channel.hxx"
@@ -46,11 +47,17 @@ namespace ipp {
 			std::memcpy(_inbuf, buf, len);
 			_avpkt.size = len;
 			_avpkt.data = _inbuf;
+#ifdef IPPBIN_HAVE_AVCODEC_SEND_PACKET
+			avcodec_send_packet(_context, &_avpkt);
+			while (avcodec_receive_frame(_context, _frame) == 0) {
+				callback(_frame->data[0], _frame->linesize[0], _frame->width, _frame->height);
+				_frame_count++;
+			}
+#else
 			int got_frame;
 			int frame_len = avcodec_decode_video2(_context, _frame, &got_frame, &_avpkt);
 			if (frame_len < 0) {
 				fprintf(stderr, "Error while decoding frame %d\n", _frame_count);
-
 			}
 			if (got_frame) {
 				LOG(DEBUG) << "Saving frame " << _frame_count;
@@ -61,6 +68,7 @@ namespace ipp {
 				_avpkt.size -= len;
 				_avpkt.data += len;
 			}
+#endif
 		}
 
 		void video_decoder_channel::flush_packets() {
