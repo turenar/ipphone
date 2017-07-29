@@ -17,6 +17,8 @@ namespace ippbin {
 //#ifdef _DEBUG
 		_worker->addSink(std::make_unique<ipp::logger::log_console_sink>("log.txt"),
 		                 &ipp::logger::log_console_sink::log);
+		_worker->addSink(std::make_unique<ipp::logger::log_console_sink>(nullptr, ERROR.value),
+		                 &ipp::logger::log_console_sink::log);
 //#endif
 		g3::initializeLogging(_worker.get());
 		LOG(INFO) << "IPP Version: " << ipp::VERSION;

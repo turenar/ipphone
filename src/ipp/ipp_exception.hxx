@@ -14,8 +14,6 @@ namespace ipp {
 
 		virtual const char* what() const noexcept override final { return _what.c_str(); }
 
-		virtual ~ipp_exception() {}
-
 	private:
 		std::string _what;
 	};

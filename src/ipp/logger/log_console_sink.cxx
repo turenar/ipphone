@@ -4,15 +4,19 @@
 
 namespace ipp {
 	namespace logger {
-		log_console_sink::log_console_sink(const char* filename) {
+		log_console_sink::log_console_sink(const char* filename, int minimum_log_level) {
 			if (filename) {
 				_fp = fopen(filename, "w");
 			} else {
 				_fp = stderr;
 			}
+			_minimum_log_level = minimum_log_level;
 		}
 
 		void log_console_sink::log(g3::LogMessageMover mesinst) {
+			if (mesinst.get()._level.value < _minimum_log_level) {
+				return;
+			}
 			std::lock_guard<std::mutex> lock(_lock);
 			auto& mes = mesinst.get();
 
