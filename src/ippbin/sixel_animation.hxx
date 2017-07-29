@@ -2,7 +2,6 @@
 
 #include <sixel.h>
 #include <memory>
-#include <cstdio>
 
 namespace ippbin {
 	class sixel_animation {
@@ -23,7 +22,6 @@ namespace ippbin {
 		sixel_output_t* _output = nullptr;
 		std::unique_ptr<unsigned char[]> _buf;
 		std::size_t _buf_size = 0;
-		FILE* _fd = stdout;
 
 		void initialize(int width, int height);
 	};
