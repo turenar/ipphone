@@ -17,7 +17,7 @@ namespace ipp {
 					display = ":1";
 				}
 
-				int nullfd = open("/tmp/ffmpeg.out", O_RDWR | O_TRUNC | O_CREAT, 0);
+				int nullfd = open("/tmp/ffmpeg.out", O_RDWR | O_TRUNC | O_CREAT, 0600);
 				if (nullfd < 0) {
 					throw ipp::ipp_system_exception("/dev/null", errno, std::system_category());
 				}
@@ -26,7 +26,7 @@ namespace ipp {
 				if (cpid == -1) {
 					throw ipp::ipp_system_exception("fork failed", errno, std::system_category());
 				} else if (cpid == 0) {
-					// child process: ffmpeg -video_size 512x512 -f x11grab -i :1 -r 5 -f libx264 -
+					// child process: ffmpeg -video_size 600x600 -f x11grab -i :1 -r 5 -f mpeg2video -
 					close(STDIN_FILENO);
 					close(STDOUT_FILENO);
 					close(STDERR_FILENO);
