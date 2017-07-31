@@ -3,6 +3,10 @@
 #include "ipp/ipp_exception.hxx"
 #include <cstring>
 
+extern "C" {
+#include <libavutil/imgutils.h>
+}
+
 namespace ippbin {
 	namespace {
 		int sixel_write(char* data, int size, void* priv) {
@@ -26,7 +30,7 @@ namespace ippbin {
 		}
 	}
 
-	void sixel_animation::initialize(int, int) {
+	void sixel_animation::initialize(int w, int h, AVPixelFormat format) {
 		if (_encoder != nullptr) {
 			return;
 		}
@@ -42,21 +46,21 @@ namespace ippbin {
 		if (SIXEL_FAILED(result)) {
 			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
 		}
+
+		int ret = av_image_alloc(_buffer, _buffer_linesize, w, h, AV_PIX_FMT_RGB24, 1);
+		if (ret < 0) {
+			IPP_THROW_EXCEPTION(sixel_exception("av_image_alloc failed"));
+		}
+		_sws_context = sws_getContext(w, h, format,
+		                              w, h, AV_PIX_FMT_RGB24,
+		                              SWS_BILINEAR, nullptr, nullptr, nullptr);
+		if (!_sws_context) {
+			IPP_THROW_EXCEPTION(sixel_exception("sws_getContext failed"));
+		}
 	}
 
-	void sixel_animation::data(uint8_t* mono_data, int line_height, int width, int height) {
-		size_t expected_size = static_cast<std::size_t>(width * height);
-		LOG(DEBUG) << expected_size;
-		if (_buf_size < expected_size) {
-			_buf_size = expected_size;
-			_buf = std::make_unique<unsigned char[]>(expected_size);
-		}
-		unsigned char* ptr = _buf.get();
-		for (int y = 0; y < height; ++y) {
-			std::memcpy(ptr, mono_data + y * line_height, static_cast<std::size_t>(width));
-			ptr += width;
-		}
-		initialize(width, height);
+	void sixel_animation::data(const AVFrame* fr, int width, int height) {
+		initialize(width, height, AVPixelFormat(fr->format));
 		if (_dither) {
 			sixel_dither_unref(_dither);
 		}
@@ -64,12 +68,14 @@ namespace ippbin {
 		if (SIXEL_FAILED(result)) {
 			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
 		}
-		result = sixel_dither_initialize(_dither, _buf.get(), width, height,
-		                                 SIXEL_PIXELFORMAT_G8, LARGE_AUTO, REP_AUTO, QUALITY_AUTO);
+		sws_scale(_sws_context, static_cast<const std::uint8_t* const*>(fr->data), fr->linesize, 0, height,
+		          _buffer, _buffer_linesize);
+		result = sixel_dither_initialize(_dither, _buffer[0], width, height,
+		                                 SIXEL_PIXELFORMAT_RGB888, LARGE_AUTO, REP_AUTO, QUALITY_AUTO);
 		if (SIXEL_FAILED(result)) {
 			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
 		}
-		result = sixel_encode(_buf.get(), width, height, 8, _dither, _output);
+		result = sixel_encode(_buffer[0], width, height, 8, _dither, _output);
 		if (SIXEL_FAILED(result)) {
 			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
 		}

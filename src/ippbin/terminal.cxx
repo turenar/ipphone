@@ -218,16 +218,13 @@ namespace ippbin {
 		if (vdc) {
 			using namespace std::placeholders;
 			println("incoming video channel");
-			vdc->callback(std::bind(&terminal::video_frame_hook, this, _1, _2, _3, _4));
+			vdc->callback(std::bind(&terminal::video_frame_hook, this, _1, _2, _3));
 			_console_enabled = false;
 			endwin();
 		}
 	}
 
-	void terminal::video_frame_hook(uint8_t* mono_data, int line_height, int width, int height) {
-		_sixel.data(mono_data, line_height, width, height);
+	void terminal::video_frame_hook(const AVFrame* fr, int width, int height) {
+		_sixel.data(fr, width, height);
 	}
 }
-
-
-

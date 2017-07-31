@@ -50,7 +50,7 @@ namespace ipp {
 #ifdef IPPBIN_HAVE_AVCODEC_SEND_PACKET
 			avcodec_send_packet(_context, &_avpkt);
 			while (avcodec_receive_frame(_context, _frame) == 0) {
-				callback(_frame->data[0], _frame->linesize[0], _frame->width, _frame->height);
+				callback(_frame, _frame->width, _frame->height);
 				_frame_count++;
 			}
 #else
@@ -81,9 +81,9 @@ namespace ipp {
 			_callback = std::move(c);
 		}
 
-		void video_decoder_channel::callback(uint8_t* mono_data, int line_height, int width, int height) {
+		void video_decoder_channel::callback(const AVFrame* fr, int width, int height) {
 			if (_callback) {
-				_callback(mono_data, line_height, width, height);
+				_callback(fr, width, height);
 			}
 		}
 	}

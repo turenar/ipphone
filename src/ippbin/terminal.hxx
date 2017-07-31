@@ -62,6 +62,6 @@ namespace ippbin {
 		sixel_animation _sixel;
 
 		void channel_open_hook(std::unique_ptr<ipp::channel::channel_wrapper>&, ipp::protocol::channel::channel_flag);
-		void video_frame_hook(uint8_t* mono_data, int line_height, int width, int height);
+		void video_frame_hook(const AVFrame* fr, int width, int height);
 	};
 }

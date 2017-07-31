@@ -2,6 +2,11 @@
 
 #include <sixel.h>
 #include <memory>
+#include "ipp/channel/video_decoder_channel.hxx"
+
+extern "C" {
+#include "libswscale/swscale.h"
+}
 
 namespace ippbin {
 	class sixel_animation {
@@ -13,16 +18,17 @@ namespace ippbin {
 		sixel_animation& operator=(sixel_animation&&) = delete;
 		~sixel_animation();
 
-		void data(uint8_t* mono_data, int line_height, int width, int height);
+		void data(const AVFrame*, int width, int height);
 
 	private:
 		sixel_allocator_t* _allocator = nullptr;
 		sixel_encoder_t* _encoder = nullptr;
 		sixel_dither_t* _dither = nullptr;
 		sixel_output_t* _output = nullptr;
-		std::unique_ptr<unsigned char[]> _buf;
-		std::size_t _buf_size = 0;
+		SwsContext* _sws_context = nullptr;
+		std::uint8_t* _buffer[4];
+		int _buffer_linesize[4];
 
-		void initialize(int width, int height);
+		void initialize(int width, int height, AVPixelFormat format);
 	};
 }

@@ -12,7 +12,7 @@ namespace ipp {
 		class video_decoder_channel final : public channel_wrapper {
 		public:
 			using channel_type = protocol::channel::channel_type;
-			using callback_type = std::function<void(uint8_t*, int, int, int)>;
+			using callback_type = std::function<void(const AVFrame*, int, int)>;
 			static constexpr std::size_t inbuf_size = 65536;
 
 			video_decoder_channel(ipphone&, uint32_t ch_id, channel_type ch_type);
@@ -34,7 +34,7 @@ namespace ipp {
 			uint8_t _inbuf[inbuf_size + AV_INPUT_BUFFER_PADDING_SIZE];
 			AVPacket _avpkt;
 
-			void callback(uint8_t* mono_data, int line_height, int width, int height);
+			void callback(const AVFrame*, int width, int height);
 		};
 	}
 }
