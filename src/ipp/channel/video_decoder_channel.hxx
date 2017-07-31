@@ -16,6 +16,7 @@ namespace ipp {
 			static constexpr std::size_t inbuf_size = 65536;
 
 			video_decoder_channel(ipphone&, uint32_t ch_id, channel_type ch_type);
+			virtual ~video_decoder_channel();
 
 			virtual void receive(const std::uint8_t* buf, const std::uint16_t len) override;
 			virtual void flush_packets() override;
@@ -32,7 +33,7 @@ namespace ipp {
 			int _frame_count = 0;
 			AVFrame* _frame;
 			uint8_t _inbuf[inbuf_size + AV_INPUT_BUFFER_PADDING_SIZE];
-			AVPacket _avpkt;
+			AVPacket* _avpkt;
 
 			void callback(const AVFrame*, int width, int height);
 		};

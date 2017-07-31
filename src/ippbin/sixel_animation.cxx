@@ -28,6 +28,15 @@ namespace ippbin {
 		if (_allocator) {
 			sixel_allocator_unref(_allocator);
 		}
+		if (_dither) {
+			sixel_dither_unref(_dither);
+		}
+		if (_buffer[0]) {
+			av_freep(&_buffer[0]);
+		}
+		if (_sws_context) {
+			sws_freeContext(_sws_context);
+		}
 	}
 
 	void sixel_animation::initialize(int w, int h, AVPixelFormat format) {
