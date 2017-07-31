@@ -26,8 +26,9 @@ namespace ippbin {
 		sixel_dither_t* _dither = nullptr;
 		sixel_output_t* _output = nullptr;
 		SwsContext* _sws_context = nullptr;
-		std::uint8_t* _buffer[4];
+		std::uint8_t* _buffer[4] = {};
 		int _buffer_linesize[4];
+		int _frame_number = -1;
 
 		void initialize(int width, int height, AVPixelFormat format);
 	};

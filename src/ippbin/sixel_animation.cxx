@@ -31,9 +31,10 @@ namespace ippbin {
 	}
 
 	void sixel_animation::initialize(int w, int h, AVPixelFormat format) {
-		if (_encoder != nullptr) {
+		if (_frame_number >= 0) {
 			return;
 		}
+		_frame_number = 0;
 		int result = sixel_allocator_new(&_allocator, &malloc, &calloc, &realloc, &free);
 		if (SIXEL_FAILED(result)) {
 			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
@@ -47,6 +48,7 @@ namespace ippbin {
 			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
 		}
 
+		// align==1 can pass directly raw data to libsixel!
 		int ret = av_image_alloc(_buffer, _buffer_linesize, w, h, AV_PIX_FMT_RGB24, 1);
 		if (ret < 0) {
 			IPP_THROW_EXCEPTION(sixel_exception("av_image_alloc failed"));
@@ -61,19 +63,22 @@ namespace ippbin {
 
 	void sixel_animation::data(const AVFrame* fr, int width, int height) {
 		initialize(width, height, AVPixelFormat(fr->format));
-		if (_dither) {
-			sixel_dither_unref(_dither);
-		}
-		int result = sixel_dither_new(&_dither, 256, _allocator);
-		if (SIXEL_FAILED(result)) {
-			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
-		}
+		int result;
 		sws_scale(_sws_context, static_cast<const std::uint8_t* const*>(fr->data), fr->linesize, 0, height,
 		          _buffer, _buffer_linesize);
-		result = sixel_dither_initialize(_dither, _buffer[0], width, height,
-		                                 SIXEL_PIXELFORMAT_RGB888, LARGE_AUTO, REP_AUTO, QUALITY_AUTO);
-		if (SIXEL_FAILED(result)) {
-			IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
+		if ((_frame_number & 0xf) == 0) {
+			if (_dither) {
+				sixel_dither_unref(_dither);
+			}
+			result = sixel_dither_new(&_dither, 256, _allocator);
+			if (SIXEL_FAILED(result)) {
+				IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
+			}
+			result = sixel_dither_initialize(_dither, _buffer[0], width, height,
+			                                 SIXEL_PIXELFORMAT_RGB888, LARGE_AUTO, REP_AUTO, QUALITY_AUTO);
+			if (SIXEL_FAILED(result)) {
+				IPP_THROW_EXCEPTION(sixel_exception(sixel_helper_format_error(result)));
+			}
 		}
 		result = sixel_encode(_buffer[0], width, height, 8, _dither, _output);
 		if (SIXEL_FAILED(result)) {
