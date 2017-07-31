@@ -49,7 +49,9 @@ g3logger_dep = dependency('g3logger',
 
 libavcodec_dep = dependency('libavcodec')
 libavutil_dep = dependency('libavutil')
-ffmpeg_dep = declare_dependency(dependencies: [libavcodec_dep, libavutil_dep])
+libswscale_dep = dependency('libswscale')
+ffmpeg_dep = declare_dependency(
+	dependencies: [libavcodec_dep, libavutil_dep, libswscale_dep])
 libsixel_dep = dependency('libsixel')
 
 conf = configuration_data()
