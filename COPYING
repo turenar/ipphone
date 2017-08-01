@@ -1,0 +1,72 @@
+This application depends on libsixel, which is licensed under MIT License.
+This application depends on libsox, which is licensed under LGPL v2+.
+This application depends on FFmpeg, which is licensed under LGPL v2.1+.
+
+This application does not depend on ffmpeg x11grab,
+  which is licensed under GPL v2+. This application executes x11grab
+  as ffmpeg command and uses his output. This means this application
+  isn't forced to be licensed under GPL v2+.
+  (see: https://www.gnu.org/licenses/gpl-faq.html#WhatCaseIsOutputGPL)
+  If you think this paragraph is wrong, please contact to me
+  as soon as possible.
+  note: This application execute ffmpeg command not to avoid
+        being 'polluted by GPL', but I tried to avoid
+        using ffmpeg as library because the world of ffmpeg is too big
+        (and some reasons).
+
+
+
+-- the license of libsixel --
+
+Copyright (c) 2014-2016 Hayaki Saito
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+-- the license of libsox --
+
+Copyright 1998-2013 Chris Bagwell and SoX Contributors.
+Copyright 1991 Lance Norskog and Sundry Contributors.
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 2, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MER‐
+CHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+Public License for more details.
+
+
+-- the license of FFmpeg --
+
+
+
+Most files in FFmpeg are under the GNU Lesser General Public License version 2.1
+or later (LGPL v2.1+). Read the file `COPYING.LGPLv2.1` for details. Some other
+files have MIT/X11/BSD-style licenses. In combination the LGPL v2.1+ applies to
+FFmpeg.
+
+Some optional parts of FFmpeg are licensed under the GNU General Public License
+version 2 or later (GPL v2+). See the file `COPYING.GPLv2` for details. None of
+these parts are used by default, you have to explicitly pass `--enable-gpl` to
+configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
+
+
+note: this application depends only on part licensed under LGPLv2.1+.

@@ -9,7 +9,7 @@
 
 ### Dependencies
 
-libsox, boost-exceptions, ncursesw, libavcodec, libsixel, ffmpeg
+libsox, boost-exceptions, ncursesw, libavcodec, libsixel, ffmpeg, **ffmpeg command** with mpeg2video output
 
 Ubuntuなら
 
