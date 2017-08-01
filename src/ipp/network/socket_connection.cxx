@@ -10,7 +10,7 @@ namespace ipp {
 				(void) ev;
 				(void) data;
 				(void) buflen;
-#ifndef NDEBUG
+#if !defined(NDEBUG) && 0
 				std::ostringstream buf;
 				buf << ev << ": fd=" << fd << std::hex;
 				const std::uint8_t* p = data;
@@ -27,7 +27,7 @@ namespace ipp {
 					}
 					break;
 				}
-//				LOG(DEBUG) << buf.str();
+				LOG(DEBUG) << buf.str();
 #endif
 			}
 		}
