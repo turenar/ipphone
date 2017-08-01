@@ -4,7 +4,7 @@ project('i1i2i3', 'cpp',
 		'warning_level=3',
 		'default_library=static',
 	],
-	version: '4.0',
+	version: '4.1',
 	license: 'MIT')
 
 cpp_compiler = meson.get_compiler('cpp')
